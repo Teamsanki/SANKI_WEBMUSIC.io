@@ -14,12 +14,18 @@
     </div>
   </header>
   <main>
-    <div id="user-name-container">
-      <label for="username">Enter your name to join a room:</label>
+    <!-- Popup for User Name -->
+    <div id="popup" class="popup">
+      <label for="username">Enter your name to join the room:</label>
       <input type="text" id="username" placeholder="Enter your name">
       <button id="joinRoomBtn">Join Room</button>
     </div>
-    <ul id="playlist"></ul>
+
+    <!-- Room Name and Playlist -->
+    <div id="roomContainer" style="display: none;">
+      <h2 id="roomName">SANKI HOUSE</h2>
+      <ul id="playlist"></ul>
+    </div>
   </main>
   <footer>
     <audio id="audioPlayer" controls></audio>
