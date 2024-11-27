@@ -7,37 +7,26 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header>
-    <h1>Welcome to the Music Room</h1>
-    <div class="circle-container">
-      <div class="circle-animation"></div>
-      <img src="https://firebasestorage.googleapis.com/v0/b/social-bite-skofficial.appspot.com/o/Sanki%2FIMG_6861.jpeg?alt=media&token=7f50a8e1-5ae0-40b1-a951-64c5d96fc2b3" alt="Company Logo" class="circle-image" />
-    </div>
-  </header>
 
-  <div id="userForm" class="user-form">
-    <label for="username">Enter your name:</label>
-    <input type="text" id="username" placeholder="Enter your name" required>
-    <label for="telegram">Enter your Telegram username:</label>
-    <input type="text" id="telegram" placeholder="Enter your Telegram username" required>
-    <label for="roomName">Enter room name:</label>
-    <input type="text" id="roomName" placeholder="Enter room name" required>
+  <div id="userForm">
+    <h2>Enter Your Details</h2>
+    <input type="text" id="username" placeholder="Enter your username" />
+    <input type="text" id="telegram" placeholder="Enter your Telegram username" />
+    <input type="text" id="roomName" placeholder="Enter your room name" />
     <button id="submitBtn">Submit</button>
   </div>
 
-  <div id="roomDetails" class="room-details" style="display: none;">
-    <h2>Your Room</h2>
+  <div id="roomDetails">
+    <h2>Room Details</h2>
     <p id="welcomeMessage"></p>
-    <p>Room Name: <span id="roomDisplay"></span></p>
+    <p>Room: <span id="roomDisplay"></span></p>
     <p>Room ID: <span id="roomIdDisplay"></span></p>
-    <p>Music Playlist:</p>
+    <h3>Playlist</h3>
     <ul id="playlist"></ul>
+    <audio id="audioPlayer" controls></audio>
   </div>
 
-  <footer>
-    <audio id="audioPlayer" controls></audio>
-  </footer>
-
   <script src="script.js"></script>
+
 </body>
 </html>
