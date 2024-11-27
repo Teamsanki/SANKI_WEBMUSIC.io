@@ -7,13 +7,13 @@ const playlistData = [
 
 let username = '';
 let roomName = 'SANKI HOUSE'; // Default room name
-let usersInRoom = [];
 let userTelegramUsername = '';
 
 // DOM elements
 const popup = document.getElementById('popup');
 const joinRoomBtn = document.getElementById('joinRoomBtn');
 const userNameInput = document.getElementById('username');
+const roomNameInput = document.getElementById('roomNameInput');
 const roomContainer = document.getElementById('roomContainer');
 const roomNameElement = document.getElementById('roomName');
 const playlistElement = document.getElementById("playlist");
@@ -32,7 +32,7 @@ function showToast(message) {
 // Check if the username is already stored in localStorage
 if (localStorage.getItem('username')) {
   username = localStorage.getItem('username');
-  roomName = `Room of ${username}`;
+  roomName = localStorage.getItem('roomName') || 'SANKI HOUSE'; // Default or saved room name
   roomNameElement.textContent = roomName;
   roomContainer.style.display = 'block';
   showToast(`${username}, welcome back to the room!`);
@@ -42,24 +42,38 @@ if (localStorage.getItem('username')) {
   popup.style.display = 'flex';
 }
 
-// Function to join room
+// Join room process (for room name)
 joinRoomBtn.addEventListener('click', () => {
-  username = userNameInput.value.trim();
-  if (username) {
-    // Store the username in localStorage
-    localStorage.setItem('username', username);
-
-    roomName = `Room of ${username}`;
-    usersInRoom.push(username);
-    roomNameElement.textContent = roomName;
-    roomContainer.style.display = 'block';
-    popup.style.display = 'none';
-    showToast(`${username}, you have joined the room!`);
-    loadPlaylist();
+  if (!username) {
+    username = userNameInput.value.trim();
+    if (username) {
+      localStorage.setItem('username', username); // Save username in localStorage
+      showToast(`${username}, you have joined the platform!`);
+      showRoomNameInput(); // Show room name input
+    } else {
+      alert('Please enter a name');
+    }
   } else {
-    alert('Please enter a name');
+    roomName = roomNameInput.value.trim();
+    if (roomName) {
+      // Store room name and show the music list
+      localStorage.setItem('roomName', roomName);
+      roomNameElement.textContent = roomName;
+      roomContainer.style.display = 'block';
+      popup.style.display = 'none';
+      showToast(`Welcome to ${roomName}, ${username}!`);
+      loadPlaylist();
+    } else {
+      alert('Please enter a valid room name');
+    }
   }
 });
+
+// Show room name input
+function showRoomNameInput() {
+  const roomNameForm = document.getElementById('roomNameForm');
+  roomNameForm.style.display = 'block';
+}
 
 // Load Playlist
 function loadPlaylist() {
@@ -99,7 +113,7 @@ function playSong(previewUrl, songName) {
 
 // Log user actions and send to Telegram
 function logUserAction(user, songName) {
-  const message = `◈𝐍𝐀𝐌𝐄: ${user} \n\n◈𝐒𝐎𝐍𝐆: ${songName} \n\n◈𝐑𝐎𝐎𝐌: ${roomName}. \n\n◈𝐔𝐒𝐄𝐑𝐍𝐀𝐌𝐄: @${userTelegramUsername}`;
+  const message = `${user} played: ${songName} in room: ${roomName}. Telegram username: @${userTelegramUsername}`;
   sendToTelegram(message);
 }
 
