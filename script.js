@@ -14,7 +14,22 @@ let roomName = "";
 let roomID = "";
 
 // Initialize the app
-document.getElementById("submitBtn").addEventListener("click", handleSubmit);
+document.addEventListener("DOMContentLoaded", function() {
+  // Check if username and roomName are stored in localStorage
+  if (localStorage.getItem("userName") && localStorage.getItem("roomName")) {
+    // Load stored values
+    userName = localStorage.getItem("userName");
+    roomName = localStorage.getItem("roomName");
+    roomID = localStorage.getItem("roomID");
+    document.getElementById("roomID").innerText = roomID;
+    document.getElementById("roomInfo").style.display = "block";
+    loadPlaylist();
+    sendLogToTelegram(`${userName} has returned to room: ${roomName} with Room ID: ${roomID}`);
+  } else {
+    // If not stored, show input form
+    document.getElementById("submitBtn").addEventListener("click", handleSubmit);
+  }
+});
 
 // Handle form submission
 function handleSubmit() {
@@ -27,6 +42,12 @@ function handleSubmit() {
     document.getElementById("roomInfo").style.display = "block";
     document.getElementById("userInput").style.display = "none";
     loadPlaylist();
+    
+    // Store values in localStorage
+    localStorage.setItem("userName", userName);
+    localStorage.setItem("roomName", roomName);
+    localStorage.setItem("roomID", roomID);
+    
     sendLogToTelegram(`${userName} has joined the room: ${roomName} with Room ID: ${roomID}`);
   }
 }
