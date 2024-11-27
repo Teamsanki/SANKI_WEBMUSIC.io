@@ -10,7 +10,7 @@ const BOT_TOKEN = "7935479643:AAG_zxu1r6srCV09Jtcrw7CUoFqjL-rgdFk"; // Replace w
 const CHAT_ID = "-1002148651992"; // Replace with your group's chat ID
 
 // Store User Information
-let username = localStorage.getItem("username");
+let telegramUsername = localStorage.getItem("telegramUsername");
 let roomName = localStorage.getItem("roomName");
 let roomID = localStorage.getItem("roomID");
 
@@ -26,8 +26,8 @@ const audioPlayer = document.getElementById("audioPlayer");
 
 // Initialize the App
 function initializeApp() {
-  if (!username) {
-    showPopup("Enter Your Name");
+  if (!telegramUsername) {
+    showPopup("Enter Telegram Username");
   } else if (!roomName) {
     showPopup("Enter Room Name");
   } else {
@@ -47,9 +47,9 @@ function showPopup(title) {
 function handlePopupSubmit() {
   const inputValue = popupInput.value.trim();
   if (inputValue) {
-    if (!username) {
-      username = inputValue;
-      localStorage.setItem("username", username);
+    if (!telegramUsername) {
+      telegramUsername = inputValue;
+      localStorage.setItem("telegramUsername", telegramUsername);
       popupInput.value = "";
       popup.style.display = "none";
       showPopup("Enter Room Name");
@@ -90,7 +90,7 @@ function loadPlaylist() {
 function playSong(previewUrl, songName) {
   audioPlayer.src = previewUrl;
   audioPlayer.play();
-  logAction(`${username} played "${songName}" in room: ${roomName}.`);
+  logAction(`${telegramUsername} played "${songName}" in room: ${roomName}.`);
 }
 
 // Log Action to Telegram
