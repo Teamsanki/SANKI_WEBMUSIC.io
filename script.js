@@ -1,4 +1,4 @@
-const API_KEY = 'YOUR_YOUTUBE_API_KEY';  // Replace with your YouTube API Key
+const API_KEY = 'AIzaSyB4MnMiAWAcVFK4VxGKaEOl0T5zqa7CXxM';  // Replace with your YouTube API Key
 
 function searchMusic() {
     const query = document.getElementById('searchInput').value;
