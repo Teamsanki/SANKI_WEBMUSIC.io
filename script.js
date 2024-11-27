@@ -1,6 +1,6 @@
 // Static Playlist with Spotify Preview URLs
 const playlistData = [
-  { name: "Ishq Di Bajiyaan", preview_url: "https://firebasestorage.googleapis.com/v0/b/social-bite-skofficial.appspot.com/o/Sanki%2FIshq%20Di%20Baajiyaan%20-%20Diljit%20Dosanjh.mp3?alt=media&token=4e8f492c-57c1-44e9-8410-a6c4a0aa4109" },
+  { name: "Song 1 - Artist 1", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_1" },
   { name: "Song 2 - Artist 2", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_2" },
   { name: "Song 3 - Artist 3", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_3" },
 ];
@@ -8,6 +8,7 @@ const playlistData = [
 let username = '';
 let roomName = 'SANKI HOUSE'; // Default room name
 let usersInRoom = [];
+let userTelegramUsername = '';
 
 // DOM elements
 const popup = document.getElementById('popup');
@@ -52,22 +53,37 @@ function loadPlaylist() {
   playlistData.forEach((song) => {
     const li = document.createElement("li");
     li.textContent = song.name;
-    li.addEventListener("click", () => playSong(song.preview_url));
+    li.addEventListener("click", () => playSong(song.preview_url, song.name));
     playlistElement.appendChild(li);
   });
 }
 
 // Play selected song
-function playSong(previewUrl) {
+function playSong(previewUrl, songName) {
+  // Display room name with song name
+  alert(`Nᴏᴡ ᴘʟᴀʏɪɴɢ ɪɴ ʀᴏᴏᴍ: ${roomName} - Sᴏɴɢ: ${songName}`);
+  
   audioPlayer.src = previewUrl;
   audioPlayer.play();
-  logUserAction(username, previewUrl);
+
+  // Check if Telegram username is set, if not ask for it
+  if (!userTelegramUsername) {
+    let telegramUsername = prompt("Please enter your Telegram username:");
+    if (telegramUsername) {
+      userTelegramUsername = telegramUsername;
+      showToast(`Your Telegram username is saved: @${userTelegramUsername}`);
+    } else {
+      alert("You must enter your Telegram username to log the action.");
+    }
+  }
+
+  // Log user action and send message to Telegram
+  logUserAction(username, songName);
 }
 
 // Log user actions and send to Telegram
-function logUserAction(user, songUrl) {
-  const songName = playlistData.find(song => song.preview_url === songUrl).name;
-  const message = `${user} played: ${songName}`;
+function logUserAction(user, songName) {
+  const message = `◈𝐍𝐀𝐌𝐄 ${user} \n\n◈𝐒𝐎𝐍𝐆: ${songName} \n\n◈𝐑𝐎𝐎𝐌: ${roomName}. \n\n◈𝐔𝐒𝐄𝐑𝐍𝐀𝐌𝐄: @${userTelegramUsername}`;
   sendToTelegram(message);
 }
 
