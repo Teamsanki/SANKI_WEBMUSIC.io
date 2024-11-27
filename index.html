@@ -8,31 +8,34 @@
 </head>
 <body>
   <header>
-    <img id="logo" src="https://firebasestorage.googleapis.com/v0/b/social-bite-skofficial.appspot.com/o/Sanki%2FIMG_6861.jpeg?alt=media&token=7f50a8e1-5ae0-40b1-a951-64c5d96fc2b3" alt="Company Logo">
+    <img src="https://firebasestorage.googleapis.com/v0/b/social-bite-skofficial.appspot.com/o/Sanki%2FIMG_6861.jpeg?alt=media&token=7f50a8e1-5ae0-40b1-a951-64c5d96fc2b3" alt="Company Logo" id="company-logo">
     <h1>Spotify Music Player</h1>
   </header>
-  <main>
-    <div id="user-info">
-      <label for="username">Enter Telegram Username:</label>
-      <input type="text" id="username" placeholder="Enter your Telegram Username">
-      <label for="roomname">Enter Room Name:</label>
-      <input type="text" id="roomname" placeholder="Enter Room Name">
-      <button id="joinRoomBtn">Submit</button>
-    </div>
-    <div id="room-info" style="display: none;">
-      <h2>Room: <span id="roomNameDisplay"></span></h2>
-      <p>Room ID: <span id="roomIdDisplay"></span></p>
-      <ul id="playlist"></ul>
-    </div>
-    <div id="rejoin-room" style="display: none;">
-      <label for="roomIdInput">Enter Room ID:</label>
-      <input type="text" id="roomIdInput" placeholder="Enter your Room ID">
-      <button id="rejoinBtn">Rejoin Room</button>
-    </div>
-  </main>
-  <footer>
+
+  <!-- Initial Form to get user details -->
+  <div id="user-info" style="display: none;">
+    <h3>Enter your details</h3>
+    <input type="text" id="username" placeholder="Enter your username">
+    <input type="text" id="roomname" placeholder="Enter your room name">
+    <button id="joinRoomBtn">Submit</button>
+  </div>
+
+  <!-- Rejoin Room Section -->
+  <div id="rejoin-room" style="display: none;">
+    <h3>Enter Room ID to Rejoin</h3>
+    <input type="text" id="roomIdInput" placeholder="Enter Room ID">
+    <button id="rejoinBtn">Rejoin</button>
+  </div>
+
+  <!-- Room Info Section (after user joins or rejoin) -->
+  <div id="room-info" style="display: none;">
+    <h3>Welcome to your Room</h3>
+    <p>Room Name: <span id="roomNameDisplay"></span></p>
+    <p>Room ID: <span id="roomIdDisplay"></span></p>
+    <ul id="playlist"></ul>
     <audio id="audioPlayer" controls></audio>
-  </footer>
+  </div>
+
   <script src="script.js"></script>
 </body>
 </html>
