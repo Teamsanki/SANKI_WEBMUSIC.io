@@ -3,37 +3,40 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Online Music Room</title>
+  <title>Music Room</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <header>
     <h1>Welcome to the Music Room</h1>
-    <img src="https://firebasestorage.googleapis.com/v0/b/social-bite-skofficial.appspot.com/o/Sanki%2FIMG_6861.jpeg?alt=media&token=7f50a8e1-5ae0-40b1-a951-64c5d96fc2b3" alt="Company Logo" id="logo">
+    <div class="circle-container">
+      <img src="company_logo.png" alt="Company Logo" class="circle-image" />
+      <div class="circle-animation"></div>
+    </div>
   </header>
-  <main>
-    <!-- User Input Fields -->
-    <div id="userInput">
-      <p id="userNamePrompt">Enter your Telegram username:</p>
-      <input type="text" id="userName" placeholder="Telegram Username" />
-      <p id="roomNamePrompt">Enter the room name:</p>
-      <input type="text" id="roomName" placeholder="Room Name" />
-      <button id="submitBtn">Submit</button>
-    </div>
 
-    <!-- Room ID Section -->
-    <div id="roomInfo" style="display: none;">
-      <h3>Room ID: <span id="roomID"></span></h3>
-    </div>
+  <div id="userForm" class="user-form">
+    <label for="username">Enter your name:</label>
+    <input type="text" id="username" placeholder="Enter your name" required>
+    <label for="telegram">Enter your Telegram username:</label>
+    <input type="text" id="telegram" placeholder="Enter your Telegram username" required>
+    <label for="roomName">Enter room name:</label>
+    <input type="text" id="roomName" placeholder="Enter room name" required>
+    <button id="submitBtn">Submit</button>
+  </div>
 
-    <!-- Playlist Section -->
-    <ul id="playlist" style="display: none;">
-      <!-- Dynamic song list will appear here -->
-    </ul>
-  </main>
+  <div id="roomDetails" class="room-details" style="display: none;">
+    <h2>Your Room</h2>
+    <p>Room Name: <span id="roomDisplay"></span></p>
+    <p>Room ID: <span id="roomIdDisplay"></span></p>
+    <p>Music Playlist:</p>
+    <ul id="playlist"></ul>
+  </div>
+
   <footer>
     <audio id="audioPlayer" controls></audio>
   </footer>
+
   <script src="script.js"></script>
 </body>
 </html>
