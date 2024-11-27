@@ -3,23 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Music Room</title>
+  <title>Online Music Room</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <header>
-    <div id="logo">🎵 <strong>Music Room</strong></div>
-    <div id="room-info">
-      Room: <span id="room-name"></span> | ID: <span id="room-id"></span>
-    </div>
+    <h1>Welcome to the Music Room</h1>
+    <img src="company_logo.png" alt="Company Logo" id="logo">
   </header>
   <main>
-    <div id="popup">
-      <h2 id="popup-title">Enter Telegram Username</h2>
-      <input type="text" id="popup-input" placeholder="Enter Here" />
-      <button id="popup-button">Submit</button>
+    <!-- User Input Fields -->
+    <div id="userInput">
+      <p id="userNamePrompt">Enter your Telegram username:</p>
+      <input type="text" id="userName" placeholder="Telegram Username" />
+      <p id="roomNamePrompt">Enter the room name:</p>
+      <input type="text" id="roomName" placeholder="Room Name" />
+      <button id="submitBtn">Submit</button>
     </div>
-    <ul id="playlist"></ul>
+
+    <!-- Room ID Section -->
+    <div id="roomInfo" style="display: none;">
+      <h3>Room ID: <span id="roomID"></span></h3>
+    </div>
+
+    <!-- Playlist Section -->
+    <ul id="playlist" style="display: none;">
+      <!-- Dynamic song list will appear here -->
+    </ul>
   </main>
   <footer>
     <audio id="audioPlayer" controls></audio>
