@@ -1,49 +1,61 @@
-const clientId = "c7f630571ba54877bbf43d04ebec8f9c";
-const redirectUri = "http://localhost:5500"; // E.g., http://localhost:5500
-const scope = "user-read-playback-state user-modify-playback-state";
+const API_KEY = 'YOUR_YOUTUBE_API_KEY';  // Replace with your YouTube API Key
 
-let accessToken;
+function searchMusic() {
+    const query = document.getElementById('searchInput').value;
+    if (!query) {
+        alert('Please enter a search term!');
+        return;
+    }
 
-// Step 1: Authenticate User
-document.getElementById("loginButton").addEventListener("click", () => {
-  const authUrl = `https://accounts.spotify.com/authorize?client_id=${clientId}&response_type=token&redirect_uri=${encodeURIComponent(
-    redirectUri
-  )}&scope=${encodeURIComponent(scope)}`;
-  window.location = authUrl;
-});
+    const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${query}&type=video&key=${API_KEY}`;
 
-// Step 2: Retrieve Access Token from URL
-window.onload = () => {
-  const hash = window.location.hash;
-  if (hash) {
-    const params = new URLSearchParams(hash.substring(1));
-    accessToken = params.get("access_token");
-    loadPlaylist();
-  }
-};
-
-// Step 3: Fetch Songs from Spotify
-async function loadPlaylist() {
-  if (!accessToken) return;
-
-  const response = await fetch("https://api.spotify.com/v1/playlists/YOUR_PLAYLIST_ID", {
-    headers: { Authorization: `Bearer ${accessToken}` },
-  });
-
-  const data = await response.json();
-  const playlist = document.getElementById("playlist");
-
-  data.tracks.items.forEach((item) => {
-    const li = document.createElement("li");
-    li.textContent = item.track.name;
-    li.addEventListener("click", () => playTrack(item.track.preview_url));
-    playlist.appendChild(li);
-  });
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            displayResults(data.items);
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
 }
 
-// Step 4: Play Selected Track
-function playTrack(previewUrl) {
-  const audioPlayer = document.getElementById("audioPlayer");
-  audioPlayer.src = previewUrl;
-  audioPlayer.play();
+function displayResults(videos) {
+    const musicResults = document.getElementById('musicResults');
+    musicResults.innerHTML = ''; // Clear previous results
+
+    videos.forEach(video => {
+        const videoElement = document.createElement('div');
+        videoElement.classList.add('video');
+
+        const thumbnail = document.createElement('img');
+        thumbnail.src = video.snippet.thumbnails.high.url;
+        thumbnail.alt = video.snippet.title;
+
+        const title = document.createElement('p');
+        title.textContent = video.snippet.title;
+
+        const playButton = document.createElement('button');
+        playButton.textContent = 'Play';
+        playButton.onclick = () => playVideo(video.id.videoId);
+
+        videoElement.appendChild(thumbnail);
+        videoElement.appendChild(title);
+        videoElement.appendChild(playButton);
+
+        musicResults.appendChild(videoElement);
+    });
+}
+
+function playVideo(videoId) {
+    const iframe = document.createElement('iframe');
+    iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+    iframe.width = '560';
+    iframe.height = '315';
+    iframe.frameBorder = '0';
+    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+    iframe.allowFullscreen = true;
+
+    const musicResults = document.getElementById('musicResults');
+    musicResults.innerHTML = '';  // Clear previous results
+    musicResults.appendChild(iframe);
 }
