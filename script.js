@@ -1,80 +1,85 @@
-// Check if user data is already saved in localStorage
-window.onload = function () {
-  const savedUsername = localStorage.getItem("username");
-  const savedTelegram = localStorage.getItem("telegram");
-  const savedRoomName = localStorage.getItem("roomName");
+// Check if user has previously entered data (username and roomname)
+let username = localStorage.getItem('username');
+let roomname = localStorage.getItem('roomname');
+let roomId = localStorage.getItem('roomId');
 
-  if (savedUsername && savedTelegram && savedRoomName) {
-    // User already entered data, show room details
-    showRoomDetails(savedUsername, savedTelegram, savedRoomName);
-  } else {
-    // Prompt user to enter their details
-    document.getElementById("userForm").style.display = "block";
-  }
-};
+// Static Playlist with Spotify Preview URLs
+const playlistData = [
+  { name: "Ishq di Bajiyaan", preview_url: "https://firebasestorage.googleapis.com/v0/b/social-bite-skofficial.appspot.com/o/Sanki%2FIshq%20Di%20Baajiyaan%20-%20Diljit%20Dosanjh.mp3?alt=media&token=4e8f492c-57c1-44e9-8410-a6c4a0aa4109" },
+  { name: "Song 2 - Artist 2", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_2" },
+  { name: "Song 3 - Artist 3", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_3" },
+];
 
-// Submit button click event
-document.getElementById("submitBtn").addEventListener("click", function () {
-  const username = document.getElementById("username").value;
-  const telegram = document.getElementById("telegram").value;
-  const roomName = document.getElementById("roomName").value;
-
-  // Validate input
-  if (username && telegram && roomName) {
-    // Store data in localStorage
-    localStorage.setItem("username", username);
-    localStorage.setItem("telegram", telegram);
-    localStorage.setItem("roomName", roomName);
-
-    // Show room details
-    showRoomDetails(username, telegram, roomName);
-
-    // Hide user form
-    document.getElementById("userForm").style.display = "none";
-  } else {
-    alert("Please fill out all fields.");
-  }
-});
-
-// Function to display room details
-function showRoomDetails(username, telegram, roomName) {
-  const roomId = generateRoomId();
-  document.getElementById("roomDisplay").textContent = roomName;
-  document.getElementById("roomIdDisplay").textContent = roomId;
-  document.getElementById("welcomeMessage").textContent = `Welcome, ${username}!`;
-
-  // Show the room details section
-  document.getElementById("roomDetails").style.display = "block";
-
-  // Populate the playlist (this is static for now, could be dynamic if needed)
-  const playlist = [
-    { name: "Ishq Di Baajiyaan - Diljit Dosanjh", preview_url: "https://firebasestorage.googleapis.com/v0/b/social-bite-skofficial.appspot.com/o/Sanki%2FIshq%20Di%20Baajiyaan%20-%20Diljit%20Dosanjh.mp3?alt=media&token=4e8f492c-57c1-44e9-8410-a6c4a0aa4109" }
-  ];
-
-  const playlistElement = document.getElementById("playlist");
-  playlist.forEach((song) => {
-    const li = document.createElement("li");
-    li.textContent = song.name;
-    li.addEventListener("click", () => playSong(song.preview_url, roomName, roomId));
-    playlistElement.appendChild(li);
-}
-
-// Generate a random room ID
+// Function to generate random room ID
 function generateRoomId() {
-  return Math.random().toString(36).substring(2, 8).toUpperCase();
+  return 'ROOM-' + Math.random().toString(36).substring(2, 9).toUpperCase();
 }
 
-// Play the song and log the action
-function playSong(previewUrl, roomName, roomId) {
-  const audioPlayer = document.getElementById("audioPlayer");
+// Show join room inputs if username and roomname are not stored
+if (!username || !roomname || !roomId) {
+  document.getElementById('user-info').style.display = 'block';
+  document.getElementById('joinRoomBtn').addEventListener('click', function() {
+    username = document.getElementById('username').value;
+    roomname = document.getElementById('roomname').value;
+
+    if (username && roomname) {
+      // If no roomId exists, generate and save it
+      if (!roomId) {
+        roomId = generateRoomId();
+        localStorage.setItem('roomId', roomId);
+      }
+
+      localStorage.setItem('username', username);
+      localStorage.setItem('roomname', roomname);
+
+      // Show room info
+      document.getElementById('room-info').style.display = 'block';
+      document.getElementById('roomNameDisplay').textContent = roomname;
+      document.getElementById('roomIdDisplay').textContent = roomId;
+      document.getElementById('user-info').style.display = 'none';
+      loadPlaylist();
+    } else {
+      alert('Please enter both username and room name.');
+    }
+  });
+} else {
+  // Show the room info if already stored
+  document.getElementById('room-info').style.display = 'block';
+  document.getElementById('roomNameDisplay').textContent = roomname;
+  document.getElementById('roomIdDisplay').textContent = roomId;
+  loadPlaylist();
+}
+
+// Load Playlist
+function loadPlaylist() {
+  const playlistElement = document.getElementById('playlist');
+  const audioPlayer = document.getElementById('audioPlayer');
+
+  playlistData.forEach((song) => {
+    const li = document.createElement('li');
+    li.textContent = song.name;
+    li.addEventListener('click', () => playSong(song.preview_url));
+    playlistElement.appendChild(li);
+  });
+}
+
+// Play Selected Song
+function playSong(previewUrl) {
+  const audioPlayer = document.getElementById('audioPlayer');
   audioPlayer.src = previewUrl;
   audioPlayer.play();
 
-  // Log to Telegram
-  const botToken = "7902514308:AAGRWf0i1sN0hxgvVh75AlHNvcVpJ4j07HY";
-  const chatId = "-1002148651992"; // Your Telegram Group Chat ID
-  const message = `${roomName} (ID: ${roomId}) - User is playing: ${previewUrl}`;
+  // Send message to Telegram Bot (you need to set up bot and chat_id here)
+  const botToken = '7902514308:AAGRWf0i1sN0hxgvVh75AlHNvcVpJ4j07HY';
+  const chatId = '-1002148651992';
+  const message = `${username} played a song in room ${roomname} (Room ID: ${roomId})`;
 
-  // Send message to Telegram group
-  fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`);
+  const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
+  fetch(url).then(response => response.json()).then(data => {
+    if (data.ok) {
+      console.log('Message sent to Telegram group');
+    } else {
+      console.error('Error sending message to Telegram group');
+    }
+  });
 }
