@@ -8,9 +8,17 @@
 </head>
 <body>
   <header>
-    <h1>Online Music Player</h1>
+    <div id="logo-container">
+      <img src="company-logo.png" alt="Company Logo" id="logo">
+      <h1>Online Music Player</h1>
+    </div>
   </header>
   <main>
+    <div id="user-name-container">
+      <label for="username">Enter your name to join a room:</label>
+      <input type="text" id="username" placeholder="Enter your name">
+      <button id="joinRoomBtn">Join Room</button>
+    </div>
     <ul id="playlist"></ul>
   </main>
   <footer>
