@@ -1,61 +1,24 @@
-const API_KEY = 'AIzaSyB4MnMiAWAcVFK4VxGKaEOl0T5zqa7CXxM';  // Replace with your YouTube API Key
+// Static Playlist with Spotify Preview URLs
+const playlistData = [
+  { name: "Song 1 - Artist 1", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_1" },
+  { name: "Song 2 - Artist 2", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_2" },
+  { name: "Song 3 - Artist 3", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_3" },
+];
 
-function searchMusic() {
-    const query = document.getElementById('searchInput').value;
-    if (!query) {
-        alert('Please enter a search term!');
-        return;
-    }
+// Load Playlist
+const playlistElement = document.getElementById("playlist");
+const audioPlayer = document.getElementById("audioPlayer");
 
-    const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${query}&type=video&key=${API_KEY}`;
+// Add Songs to the Playlist
+playlistData.forEach((song) => {
+  const li = document.createElement("li");
+  li.textContent = song.name;
+  li.addEventListener("click", () => playSong(song.preview_url));
+  playlistElement.appendChild(li);
+});
 
-    fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            displayResults(data.items);
-        })
-        .catch(error => {
-            console.error('Error fetching data:', error);
-        });
-}
-
-function displayResults(videos) {
-    const musicResults = document.getElementById('musicResults');
-    musicResults.innerHTML = ''; // Clear previous results
-
-    videos.forEach(video => {
-        const videoElement = document.createElement('div');
-        videoElement.classList.add('video');
-
-        const thumbnail = document.createElement('img');
-        thumbnail.src = video.snippet.thumbnails.high.url;
-        thumbnail.alt = video.snippet.title;
-
-        const title = document.createElement('p');
-        title.textContent = video.snippet.title;
-
-        const playButton = document.createElement('button');
-        playButton.textContent = 'Play';
-        playButton.onclick = () => playVideo(video.id.videoId);
-
-        videoElement.appendChild(thumbnail);
-        videoElement.appendChild(title);
-        videoElement.appendChild(playButton);
-
-        musicResults.appendChild(videoElement);
-    });
-}
-
-function playVideo(videoId) {
-    const iframe = document.createElement('iframe');
-    iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
-    iframe.width = '560';
-    iframe.height = '315';
-    iframe.frameBorder = '0';
-    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
-    iframe.allowFullscreen = true;
-
-    const musicResults = document.getElementById('musicResults');
-    musicResults.innerHTML = '';  // Clear previous results
-    musicResults.appendChild(iframe);
+// Play Selected Song
+function playSong(previewUrl) {
+  audioPlayer.src = previewUrl;
+  audioPlayer.play();
 }
