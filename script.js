@@ -1,109 +1,81 @@
-// Define the bot token and group chat ID
-const BOT_TOKEN = "7902514308:AAGRWf0i1sN0hxgvVh75AlHNvcVpJ4j07HY"; // Replace with your bot token
-const CHAT_ID = "-1002148651992"; // Replace with your group's chat ID
+// Check if user data is already saved in localStorage
+if(localStorage.getItem("username") && localStorage.getItem("telegram") && localStorage.getItem("roomName")) {
+  displayRoom();
+}
 
-// Simulated playlist data (use actual song preview URLs)
-const playlistData = [
-  { name: "Song 1 - Artist 1", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_1" },
-  { name: "Song 2 - Artist 2", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_2" },
-  { name: "Song 3 - Artist 3", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_3" },
-];
+// Handle user form submission
+document.getElementById("submitBtn").addEventListener("click", function() {
+  const username = document.getElementById("username").value;
+  const telegram = document.getElementById("telegram").value;
+  const roomName = document.getElementById("roomName").value;
 
-let userName = "";
-let roomName = "";
-let roomID = "";
-
-// Initialize the app
-document.addEventListener("DOMContentLoaded", function() {
-  // Check if username and roomName are stored in localStorage
-  if (localStorage.getItem("userName") && localStorage.getItem("roomName")) {
-    // Load stored values
-    userName = localStorage.getItem("userName");
-    roomName = localStorage.getItem("roomName");
-    roomID = localStorage.getItem("roomID");
-    document.getElementById("roomID").innerText = roomID;
-    document.getElementById("roomInfo").style.display = "block";
-    loadPlaylist();
-    sendLogToTelegram(`${userName} has returned to room: ${roomName} with Room ID: ${roomID}`);
+  // Store user data in localStorage
+  if(username && telegram && roomName) {
+    localStorage.setItem("username", username);
+    localStorage.setItem("telegram", telegram);
+    localStorage.setItem("roomName", roomName);
+    displayRoom();
   } else {
-    // If not stored, show input form
-    document.getElementById("submitBtn").addEventListener("click", handleSubmit);
+    alert("Please fill in all the fields.");
   }
 });
 
-// Handle form submission
-function handleSubmit() {
-  userName = document.getElementById("userName").value.trim();
-  roomName = document.getElementById("roomName").value.trim();
+function displayRoom() {
+  const username = localStorage.getItem("username");
+  const telegram = localStorage.getItem("telegram");
+  const roomName = localStorage.getItem("roomName");
 
-  if (userName && roomName) {
-    roomID = generateRoomID();
-    document.getElementById("roomID").innerText = roomID;
-    document.getElementById("roomInfo").style.display = "block";
-    document.getElementById("userInput").style.display = "none";
-    loadPlaylist();
-    
-    // Store values in localStorage
-    localStorage.setItem("userName", userName);
-    localStorage.setItem("roomName", roomName);
-    localStorage.setItem("roomID", roomID);
-    
-    sendLogToTelegram(`${userName} has joined the room: ${roomName} with Room ID: ${roomID}`);
-  }
+  const roomId = generateRoomId();
+
+  document.getElementById("userForm").style.display = "none";
+  document.getElementById("roomDetails").style.display = "block";
+
+  document.getElementById("roomDisplay").textContent = roomName;
+  document.getElementById("roomIdDisplay").textContent = roomId;
+
+  loadPlaylist();
+
+  // Send message to Telegram bot about new room and user
+  sendMessageToTelegram(`New user "${username}" with Telegram username "@${telegram}" created a room named "${roomName}" (Room ID: ${roomId})`);
 }
 
-// Generate a random room ID
-function generateRoomID() {
-  return Math.random().toString(36).substr(2, 9).toUpperCase();
+// Generate a unique room ID
+function generateRoomId() {
+  return Math.random().toString(36).substring(2, 10);
 }
 
-// Load Playlist and display it
+// Load music playlist
 function loadPlaylist() {
+  const playlist = [
+    { name: "Song 1 - Artist 1", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_1" },
+    { name: "Song 2 - Artist 2", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_2" },
+    { name: "Song 3 - Artist 3", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_3" },
+  ];
+
   const playlistElement = document.getElementById("playlist");
-  playlistElement.style.display = "block";
-  
-  playlistData.forEach((song) => {
+  playlist.forEach((song) => {
     const li = document.createElement("li");
     li.textContent = song.name;
-    li.addEventListener("click", () => playSong(song.preview_url, song.name));
+    li.addEventListener("click", () => playSong(song.preview_url));
     playlistElement.appendChild(li);
   });
 }
 
-// Play the song and send log to Telegram
-function playSong(previewUrl, songName) {
+// Play selected song
+function playSong(previewUrl) {
   const audioPlayer = document.getElementById("audioPlayer");
   audioPlayer.src = previewUrl;
   audioPlayer.play();
 
-  // Send the log to Telegram group
-  sendLogToTelegram(`${userName} in room ${roomName} (ID: ${roomID}) is now playing: ${songName}`);
+  const roomId = document.getElementById("roomIdDisplay").textContent;
+  const username = localStorage.getItem("username");
+  sendMessageToTelegram(`User "${username}" in room "${roomId}" played the song: ${previewUrl}`);
 }
 
-// Send log message to the Telegram group
-function sendLogToTelegram(message) {
-  const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-  const payload = {
-    chat_id: CHAT_ID,
-    text: message,
-  };
+// Send message to Telegram bot
+function sendMessageToTelegram(message) {
+  const botToken = "7902514308:AAGRWf0i1sN0hxgvVh75AlHNvcVpJ4j07HY";
+  const chatId = "-1002148651992";
 
-  fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.ok) {
-        console.log("Log message sent to Telegram.");
-      } else {
-        console.error("Error sending message to Telegram:", data.description);
-      }
-    })
-    .catch((error) => {
-      console.error("Error connecting to Telegram API:", error);
-    });
+  fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`);
 }
