@@ -6,14 +6,29 @@ const playlistData = [
 ];
 
 let username = '';
-let roomName = 'Music Room';
+let roomName = 'SANKI HOUSE'; // Default room name
 let usersInRoom = [];
 
 // DOM elements
+const popup = document.getElementById('popup');
+const joinRoomBtn = document.getElementById('joinRoomBtn');
+const userNameInput = document.getElementById('username');
+const roomContainer = document.getElementById('roomContainer');
+const roomNameElement = document.getElementById('roomName');
 const playlistElement = document.getElementById("playlist");
 const audioPlayer = document.getElementById("audioPlayer");
-const joinRoomBtn = document.getElementById("joinRoomBtn");
-const userNameInput = document.getElementById("username");
+const toast = document.createElement('div');
+toast.className = 'toast';
+document.body.appendChild(toast);
+
+// Function to show toast message
+function showToast(message) {
+  toast.textContent = message;
+  toast.style.display = 'block';
+  setTimeout(() => {
+    toast.style.display = 'none';
+  }, 3000);
+}
 
 // Function to join room
 joinRoomBtn.addEventListener('click', () => {
@@ -21,9 +36,12 @@ joinRoomBtn.addEventListener('click', () => {
   if (username) {
     roomName = `Room of ${username}`;
     usersInRoom.push(username);
-    alert(`${username}, you have joined ${roomName}`);
-    loadPlaylist();
+    roomNameElement.textContent = roomName;
+    roomContainer.style.display = 'block';
+    popup.style.display = 'none';
+    showToast(`${username}, you have joined the room!`);
     sendToTelegram(`${username} joined the room.`);
+    loadPlaylist();
   } else {
     alert('Please enter a name');
   }
