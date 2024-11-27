@@ -3,39 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sanki House Music Room</title>
+  <title>Music Room</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <!-- Popup for Username and Room Name -->
-  <div id="popup" class="popup">
-    <div class="popup-content">
-      <img src="logo.png" alt="Company Logo" class="logo">
-      <h2>Welcome to Sanki House</h2>
-      <input type="text" id="username" placeholder="Enter your name">
-      <form id="roomNameForm" style="display: none;">
-        <input type="text" id="roomNameInput" placeholder="Enter your room name">
-      </form>
-      <button id="joinRoomBtn">Join Room</button>
-    </div>
-  </div>
-
-  <!-- Main Room Content -->
-  <header class="room-header">
-    <h1 id="roomName"></h1>
-    <div id="roomIdContainer" style="display: none;">
-      <p>Your Room ID: <span id="roomId"></span></p>
-      <button id="copyRoomIdBtn">Copy Room ID</button>
+  <header>
+    <div id="logo">🎵 <strong>Music Room</strong></div>
+    <div id="room-info">
+      Room: <span id="room-name"></span> | ID: <span id="room-id"></span>
     </div>
   </header>
-  <main id="roomContainer" style="display: none;">
+  <main>
+    <div id="popup">
+      <h2 id="popup-title">Enter Your Name</h2>
+      <input type="text" id="popup-input" placeholder="Your Name" />
+      <button id="popup-button">Submit</button>
+    </div>
     <ul id="playlist"></ul>
-    <audio id="audioPlayer" controls></audio>
   </main>
-
-  <!-- Toast Notification -->
-  <div id="toast" class="toast"></div>
-
+  <footer>
+    <audio id="audioPlayer" controls></audio>
+  </footer>
   <script src="script.js"></script>
 </body>
 </html>
