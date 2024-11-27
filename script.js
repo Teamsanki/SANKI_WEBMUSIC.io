@@ -48,9 +48,7 @@ function showRoomDetails(username, telegram, roomName) {
 
   // Populate the playlist (this is static for now, could be dynamic if needed)
   const playlist = [
-    { name: "Ishq di Bajiyaan", preview_url: "https://firebasestorage.googleapis.com/v0/b/social-bite-skofficial.appspot.com/o/Sanki%2FIshq%20Di%20Baajiyaan%20-%20Diljit%20Dosanjh.mp3?alt=media&token=4e8f492c-57c1-44e9-8410-a6c4a0aa4109" },
-    { name: "Song 2 - Artist 2", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_2" },
-    { name: "Song 3 - Artist 3", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_3" }
+    { name: "Ishq Di Baajiyaan - Diljit Dosanjh", preview_url: "https://firebasestorage.googleapis.com/v0/b/social-bite-skofficial.appspot.com/o/Sanki%2FIshq%20Di%20Baajiyaan%20-%20Diljit%20Dosanjh.mp3?alt=media&token=4e8f492c-57c1-44e9-8410-a6c4a0aa4109" }
   ];
 
   const playlistElement = document.getElementById("playlist");
@@ -72,10 +70,11 @@ function playSong(previewUrl, roomName, roomId) {
   audioPlayer.src = previewUrl;
   audioPlayer.play();
 
-  // Log to Telegram (replace 'your_telegram_token' and 'your_chat_id' with actual values)
+  // Log to Telegram
   const botToken = "7902514308:AAGRWf0i1sN0hxgvVh75AlHNvcVpJ4j07HY";
-  const chatId = "-1002148651992";
-  const message = `Room Name: ${roomName} \n\n(ID: ${roomId}) \n\n- User is playing: ${name}`;
+  const chatId = "-1002148651992"; // Your Telegram Group Chat ID
+  const message = `${roomName} (ID: ${roomId}) - User is playing: ${previewUrl}`;
 
+  // Send message to Telegram group
   fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`);
 }
