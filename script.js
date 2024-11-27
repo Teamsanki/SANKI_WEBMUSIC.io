@@ -5,7 +5,7 @@ let roomId = localStorage.getItem('roomId');
 
 // Static Playlist with Spotify Preview URLs
 const playlistData = [
-  { name: "Ishq di bajiyaan", preview_url: "https://firebasestorage.googleapis.com/v0/b/social-bite-skofficial.appspot.com/o/Sanki%2FIshq%20Di%20Baajiyaan%20-%20Diljit%20Dosanjh.mp3?alt=media&token=4e8f492c-57c1-44e9-8410-a6c4a0aa4109" },
+  { name: "Ihsq di bajiyaan", preview_url: "https://firebasestorage.googleapis.com/v0/b/social-bite-skofficial.appspot.com/o/Sanki%2FIshq%20Di%20Baajiyaan%20-%20Diljit%20Dosanjh.mp3?alt=media&token=4e8f492c-57c1-44e9-8410-a6c4a0aa4109" },
   { name: "Song 2 - Artist 2", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_2" },
   { name: "Song 3 - Artist 3", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_3" },
 ];
@@ -15,10 +15,15 @@ function generateRoomId() {
   return 'ROOM-' + Math.random().toString(36).substring(2, 9).toUpperCase();
 }
 
-// Check if data exists in localStorage to decide the flow
-if (!username || !roomname || !roomId) {
-  // First time visit, ask for username and room name
+// Check if the user already has saved data in localStorage
+if (username && roomname && roomId) {
+  // User already has a room ID and is returning
+  document.getElementById('rejoin-room').style.display = 'block';
+  document.getElementById('joinRoomBtn').style.display = 'none'; // Hide 'Submit' button
+} else {
+  // User is visiting for the first time
   document.getElementById('user-info').style.display = 'block';
+  document.getElementById('rejoin-room').style.display = 'none'; // Hide 'Rejoin' button
   document.getElementById('joinRoomBtn').addEventListener('click', function() {
     username = document.getElementById('username').value;
     roomname = document.getElementById('roomname').value;
@@ -43,23 +48,22 @@ if (!username || !roomname || !roomId) {
       alert('Please enter both username and room name.');
     }
   });
-} else {
-  // User has previously saved room, ask for room ID to rejoin
-  document.getElementById('rejoin-room').style.display = 'block';
-  document.getElementById('rejoinBtn').addEventListener('click', function() {
-    const enteredRoomId = document.getElementById('roomIdInput').value;
-
-    if (enteredRoomId === roomId) {
-      document.getElementById('room-info').style.display = 'block';
-      document.getElementById('roomNameDisplay').textContent = roomname;
-      document.getElementById('roomIdDisplay').textContent = roomId;
-      document.getElementById('rejoin-room').style.display = 'none';
-      loadPlaylist();
-    } else {
-      alert('Invalid Room ID. Please enter a valid room ID.');
-    }
-  });
 }
+
+// Handle rejoining the room with room ID
+document.getElementById('rejoinBtn').addEventListener('click', function() {
+  const enteredRoomId = document.getElementById('roomIdInput').value;
+
+  if (enteredRoomId === roomId) {
+    document.getElementById('room-info').style.display = 'block';
+    document.getElementById('roomNameDisplay').textContent = roomname;
+    document.getElementById('roomIdDisplay').textContent = roomId;
+    document.getElementById('rejoin-room').style.display = 'none';
+    loadPlaylist();
+  } else {
+    alert('Invalid Room ID. Please enter a valid room ID.');
+  }
+});
 
 // Load Playlist
 function loadPlaylist() {
@@ -81,8 +85,8 @@ function playSong(previewUrl) {
   audioPlayer.play();
 
   // Send message to Telegram Bot (you need to set up bot and chat_id here)
-  const botToken = '7902514308:AAGRWf0i1sN0hxgvVh75AlHNvcVpJ4j07HY';
-  const chatId = '-1002148651992';
+  const botToken = 'YOUR_BOT_TOKEN';
+  const chatId = 'YOUR_CHAT_ID';
   const message = `${username} played a song in room ${roomname} (Room ID: ${roomId})`;
 
   const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
