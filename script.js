@@ -1,64 +1,60 @@
-// Check if user has previously entered data (username and roomname)
-let username = localStorage.getItem('username');
-let roomname = localStorage.getItem('roomname');
-let roomId = localStorage.getItem('roomId');
-
-// Static Playlist with Spotify Preview URLs
-const playlistData = [
-  { name: "Ihsq di bajiyaan", preview_url: "https://firebasestorage.googleapis.com/v0/b/social-bite-skofficial.appspot.com/o/Sanki%2FIshq%20Di%20Baajiyaan%20-%20Diljit%20Dosanjh.mp3?alt=media&token=4e8f492c-57c1-44e9-8410-a6c4a0aa4109" },
-  { name: "Song 2 - Artist 2", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_2" },
-  { name: "Song 3 - Artist 3", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_3" },
-];
-
 // Function to generate random room ID
 function generateRoomId() {
   return 'ROOM-' + Math.random().toString(36).substring(2, 9).toUpperCase();
 }
 
-// Check if the user already has saved data in localStorage
+// Check if user has previously entered data (username, roomname, roomId)
+let username = localStorage.getItem('username');
+let roomname = localStorage.getItem('roomname');
+let roomId = localStorage.getItem('roomId');
+
+// If user details exist in localStorage, show rejoin option
 if (username && roomname && roomId) {
-  // User already has a room ID and is returning
   document.getElementById('rejoin-room').style.display = 'block';
-  document.getElementById('joinRoomBtn').style.display = 'none'; // Hide 'Submit' button
+  document.getElementById('user-info').style.display = 'none'; // Hide user info form
 } else {
-  // User is visiting for the first time
   document.getElementById('user-info').style.display = 'block';
-  document.getElementById('rejoin-room').style.display = 'none'; // Hide 'Rejoin' button
-  document.getElementById('joinRoomBtn').addEventListener('click', function() {
-    username = document.getElementById('username').value;
-    roomname = document.getElementById('roomname').value;
-
-    if (username && roomname) {
-      // If no roomId exists, generate and save it
-      if (!roomId) {
-        roomId = generateRoomId();
-        localStorage.setItem('roomId', roomId);
-      }
-
-      localStorage.setItem('username', username);
-      localStorage.setItem('roomname', roomname);
-
-      // Show room info
-      document.getElementById('room-info').style.display = 'block';
-      document.getElementById('roomNameDisplay').textContent = roomname;
-      document.getElementById('roomIdDisplay').textContent = roomId;
-      document.getElementById('user-info').style.display = 'none';
-      loadPlaylist();
-    } else {
-      alert('Please enter both username and room name.');
-    }
-  });
+  document.getElementById('rejoin-room').style.display = 'none'; // Hide rejoin option
 }
+
+// Submit Button for creating a new user
+document.getElementById('joinRoomBtn').addEventListener('click', function() {
+  username = document.getElementById('username').value;
+  roomname = document.getElementById('roomname').value;
+
+  if (username && roomname) {
+    // Generate a room ID if it doesn't exist already
+    if (!roomId) {
+      roomId = generateRoomId();
+      localStorage.setItem('roomId', roomId);
+    }
+
+    localStorage.setItem('username', username);
+    localStorage.setItem('roomname', roomname);
+
+    // Hide the user info form and display room info
+    document.getElementById('user-info').style.display = 'none';
+    document.getElementById('room-info').style.display = 'block';
+    document.getElementById('roomNameDisplay').textContent = roomname;
+    document.getElementById('roomIdDisplay').textContent = roomId;
+
+    loadPlaylist();
+  } else {
+    alert('Please enter both username and room name.');
+  }
+});
 
 // Handle rejoining the room with room ID
 document.getElementById('rejoinBtn').addEventListener('click', function() {
   const enteredRoomId = document.getElementById('roomIdInput').value;
 
   if (enteredRoomId === roomId) {
+    // User rejoined successfully
+    document.getElementById('rejoin-room').style.display = 'none';
     document.getElementById('room-info').style.display = 'block';
     document.getElementById('roomNameDisplay').textContent = roomname;
     document.getElementById('roomIdDisplay').textContent = roomId;
-    document.getElementById('rejoin-room').style.display = 'none';
+
     loadPlaylist();
   } else {
     alert('Invalid Room ID. Please enter a valid room ID.');
@@ -69,6 +65,12 @@ document.getElementById('rejoinBtn').addEventListener('click', function() {
 function loadPlaylist() {
   const playlistElement = document.getElementById('playlist');
   const audioPlayer = document.getElementById('audioPlayer');
+
+  const playlistData = [
+    { name: "Ishq di bajiyaan", preview_url: "https://firebasestorage.googleapis.com/v0/b/social-bite-skofficial.appspot.com/o/Sanki%2FIshq%20Di%20Baajiyaan%20-%20Diljit%20Dosanjh.mp3?alt=media&token=4e8f492c-57c1-44e9-8410-a6c4a0aa4109" },
+    { name: "Song 2 - Artist 2", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_2" },
+    { name: "Song 3 - Artist 3", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_3" },
+  ];
 
   playlistData.forEach((song) => {
     const li = document.createElement('li');
