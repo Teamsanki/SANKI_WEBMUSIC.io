@@ -1,4 +1,3 @@
-// Static Playlist with Spotify Preview URLs
 const playlistData = [
   { name: "Song 1 - Artist 1", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_1" },
   { name: "Song 2 - Artist 2", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_2" },
@@ -6,14 +5,15 @@ const playlistData = [
 ];
 
 let username = '';
-let roomName = 'SANKI HOUSE'; // Default room name
+let roomName = '';
 let userTelegramUsername = '';
 
-// DOM elements
+// DOM Elements
 const popup = document.getElementById('popup');
 const joinRoomBtn = document.getElementById('joinRoomBtn');
 const userNameInput = document.getElementById('username');
 const roomNameInput = document.getElementById('roomNameInput');
+const roomNameForm = document.getElementById('roomNameForm');
 const roomContainer = document.getElementById('roomContainer');
 const roomNameElement = document.getElementById('roomName');
 const playlistElement = document.getElementById("playlist");
@@ -29,55 +29,55 @@ function showToast(message) {
   }, 3000);
 }
 
-// Check if the username is already stored in localStorage
+// Check if username and room name are saved
 if (localStorage.getItem('username')) {
   username = localStorage.getItem('username');
-  roomName = localStorage.getItem('roomName') || 'SANKI HOUSE'; // Default or saved room name
-  roomNameElement.textContent = roomName;
-  roomContainer.style.display = 'block';
-  showToast(`${username}, welcome back to the room!`);
-  loadPlaylist();
+  roomName = localStorage.getItem('roomName');
+  
+  if (roomName) {
+    roomNameElement.textContent = roomName;
+    roomContainer.style.display = 'block';
+    showToast(`${username}, welcome back to the ${roomName} room!`);
+    loadPlaylist();
+  } else {
+    showRoomNameInput();
+  }
 } else {
-  // If not, show the popup to enter the username
   popup.style.display = 'flex';
 }
 
-// Join room process (for room name)
+// Join Room Button Logic
 joinRoomBtn.addEventListener('click', () => {
   if (!username) {
     username = userNameInput.value.trim();
     if (username) {
-      localStorage.setItem('username', username); // Save username in localStorage
-      showToast(`${username}, you have joined the platform!`);
-      showRoomNameInput(); // Show room name input
+      localStorage.setItem('username', username);
+      showToast(`Hello ${username}, now enter your room name.`);
+      showRoomNameInput();
     } else {
-      alert('Please enter a name');
+      alert('Please enter a valid name.');
     }
   } else {
     roomName = roomNameInput.value.trim();
     if (roomName) {
-      // Store room name and show the music list
       localStorage.setItem('roomName', roomName);
       roomNameElement.textContent = roomName;
-      roomContainer.style.display = 'block';
       popup.style.display = 'none';
-      showToast(`Welcome to ${roomName}, ${username}!`);
+      roomContainer.style.display = 'block';
+      showToast(`Welcome to the ${roomName} room, ${username}!`);
       loadPlaylist();
     } else {
-      alert('Please enter a valid room name');
+      alert('Please enter a valid room name.');
     }
   }
 });
 
-// Show room name input
 function showRoomNameInput() {
-  const roomNameForm = document.getElementById('roomNameForm');
+  userNameInput.style.display = 'none';
   roomNameForm.style.display = 'block';
 }
 
-// Load Playlist
 function loadPlaylist() {
-  // Prevent loading the playlist multiple times
   if (playlistElement.children.length === 0) {
     playlistData.forEach((song) => {
       const li = document.createElement("li");
@@ -88,40 +88,31 @@ function loadPlaylist() {
   }
 }
 
-// Play selected song
 function playSong(previewUrl, songName) {
-  // Display room name with song name
-  alert(`Now playing in room: ${roomName} - Song: ${songName}`);
-  
   audioPlayer.src = previewUrl;
   audioPlayer.play();
 
-  // Check if Telegram username is set, if not ask for it
   if (!userTelegramUsername) {
-    let telegramUsername = prompt("Please enter your Telegram username:");
+    const telegramUsername = prompt("Enter your Telegram username:");
     if (telegramUsername) {
       userTelegramUsername = telegramUsername;
-      showToast(`Your Telegram username is saved: @${userTelegramUsername}`);
+      showToast(`Telegram username saved: @${userTelegramUsername}`);
     } else {
       alert("You must enter your Telegram username to log the action.");
     }
   }
 
-  // Log user action and send message to Telegram
   logUserAction(username, songName);
 }
 
-// Log user actions and send to Telegram
 function logUserAction(user, songName) {
-  const message = `${user} played: ${songName} in room: ${roomName}. Telegram username: @${userTelegramUsername}`;
+  const message = `${user} played "${songName}" in room: ${roomName}. Telegram username: @${userTelegramUsername}`;
   sendToTelegram(message);
 }
 
-// Send log to Telegram (via bot)
 function sendToTelegram(message) {
-  const token = '7902514308:AAGRWf0i1sN0hxgvVh75AlHNvcVpJ4j07HY'; // Replace with your Telegram bot token
-  const chatId = '-1002148651992'; // Replace with your Telegram chat ID
-  
+  const token = 'YOUR_BOT_TOKEN'; 
+  const chatId = 'YOUR_CHAT_ID'; 
   fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`)
     .then(response => response.json())
     .then(data => console.log('Message sent to Telegram:', data))
