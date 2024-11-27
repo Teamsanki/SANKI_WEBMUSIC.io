@@ -112,7 +112,7 @@ function logUserAction(user, songName) {
 
 function sendToTelegram(message) {
   const token = 'YOUR_BOT_TOKEN'; 
-  const chatId = 'YOUR_CHAT_ID'; 
+  const chatId = '-1002148651992'; 
   fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`)
     .then(response => response.json())
     .then(data => console.log('Message sent to Telegram:', data))
