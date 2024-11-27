@@ -1,120 +1,122 @@
+// Static Playlist Data
 const playlistData = [
-  { name: "Song 1 - Artist 1", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_1" },
-  { name: "Song 2 - Artist 2", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_2" },
-  { name: "Song 3 - Artist 3", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_3" },
+  { name: "Song 1 - Artist 1", preview_url: "https://p.scdn.co/mp3-preview/sample1" },
+  { name: "Song 2 - Artist 2", preview_url: "https://p.scdn.co/mp3-preview/sample2" },
+  { name: "Song 3 - Artist 3", preview_url: "https://p.scdn.co/mp3-preview/sample3" },
 ];
 
-let username = '';
-let roomName = '';
-let userTelegramUsername = '';
+// Telegram Bot Details
+const BOT_TOKEN = "7935479643:AAG_zxu1r6srCV09Jtcrw7CUoFqjL-rgdFk"; // Replace with your bot's token
+const CHAT_ID = "-1002148651992"; // Replace with your group's chat ID
+
+// Store User Information
+let username = localStorage.getItem("username");
+let roomName = localStorage.getItem("roomName");
+let roomID = localStorage.getItem("roomID");
 
 // DOM Elements
-const popup = document.getElementById('popup');
-const joinRoomBtn = document.getElementById('joinRoomBtn');
-const userNameInput = document.getElementById('username');
-const roomNameInput = document.getElementById('roomNameInput');
-const roomNameForm = document.getElementById('roomNameForm');
-const roomContainer = document.getElementById('roomContainer');
-const roomNameElement = document.getElementById('roomName');
+const popup = document.getElementById("popup");
+const popupInput = document.getElementById("popup-input");
+const popupButton = document.getElementById("popup-button");
+const popupTitle = document.getElementById("popup-title");
 const playlistElement = document.getElementById("playlist");
+const roomNameElement = document.getElementById("room-name");
+const roomIDElement = document.getElementById("room-id");
 const audioPlayer = document.getElementById("audioPlayer");
-const toast = document.getElementById('toast');
 
-// Function to show toast message
-function showToast(message) {
-  toast.textContent = message;
-  toast.style.display = 'block';
-  setTimeout(() => {
-    toast.style.display = 'none';
-  }, 3000);
-}
-
-// Check if username and room name are saved
-if (localStorage.getItem('username')) {
-  username = localStorage.getItem('username');
-  roomName = localStorage.getItem('roomName');
-  
-  if (roomName) {
-    roomNameElement.textContent = roomName;
-    roomContainer.style.display = 'block';
-    showToast(`${username}, welcome back to the ${roomName} room!`);
-    loadPlaylist();
-  } else {
-    showRoomNameInput();
-  }
-} else {
-  popup.style.display = 'flex';
-}
-
-// Join Room Button Logic
-joinRoomBtn.addEventListener('click', () => {
+// Initialize the App
+function initializeApp() {
   if (!username) {
-    username = userNameInput.value.trim();
-    if (username) {
-      localStorage.setItem('username', username);
-      showToast(`Hello ${username}, now enter your room name.`);
-      showRoomNameInput();
-    } else {
-      alert('Please enter a valid name.');
-    }
+    showPopup("Enter Your Name");
+  } else if (!roomName) {
+    showPopup("Enter Room Name");
   } else {
-    roomName = roomNameInput.value.trim();
-    if (roomName) {
-      localStorage.setItem('roomName', roomName);
-      roomNameElement.textContent = roomName;
-      popup.style.display = 'none';
-      roomContainer.style.display = 'block';
-      showToast(`Welcome to the ${roomName} room, ${username}!`);
+    displayRoomDetails();
+    loadPlaylist();
+  }
+}
+
+// Show Popup for User Input
+function showPopup(title) {
+  popup.style.display = "block";
+  popupTitle.textContent = title;
+  popupButton.addEventListener("click", handlePopupSubmit);
+}
+
+// Handle Popup Submit
+function handlePopupSubmit() {
+  const inputValue = popupInput.value.trim();
+  if (inputValue) {
+    if (!username) {
+      username = inputValue;
+      localStorage.setItem("username", username);
+      popupInput.value = "";
+      popup.style.display = "none";
+      showPopup("Enter Room Name");
+    } else if (!roomName) {
+      roomName = inputValue;
+      roomID = generateRoomID();
+      localStorage.setItem("roomName", roomName);
+      localStorage.setItem("roomID", roomID);
+      popup.style.display = "none";
+      displayRoomDetails();
       loadPlaylist();
-    } else {
-      alert('Please enter a valid room name.');
     }
   }
-});
-
-function showRoomNameInput() {
-  userNameInput.style.display = 'none';
-  roomNameForm.style.display = 'block';
 }
 
+// Generate Room ID
+function generateRoomID() {
+  return Math.random().toString(36).substr(2, 8).toUpperCase();
+}
+
+// Display Room Details
+function displayRoomDetails() {
+  roomNameElement.textContent = roomName;
+  roomIDElement.textContent = roomID;
+}
+
+// Load Playlist
 function loadPlaylist() {
-  if (playlistElement.children.length === 0) {
-    playlistData.forEach((song) => {
-      const li = document.createElement("li");
-      li.textContent = song.name;
-      li.addEventListener("click", () => playSong(song.preview_url, song.name));
-      playlistElement.appendChild(li);
-    });
-  }
+  playlistData.forEach((song) => {
+    const li = document.createElement("li");
+    li.textContent = song.name;
+    li.addEventListener("click", () => playSong(song.preview_url, song.name));
+    playlistElement.appendChild(li);
+  });
 }
 
+// Play Song and Log Action
 function playSong(previewUrl, songName) {
   audioPlayer.src = previewUrl;
   audioPlayer.play();
-
-  if (!userTelegramUsername) {
-    const telegramUsername = prompt("Enter your Telegram username:");
-    if (telegramUsername) {
-      userTelegramUsername = telegramUsername;
-      showToast(`Telegram username saved: @${userTelegramUsername}`);
-    } else {
-      alert("You must enter your Telegram username to log the action.");
-    }
-  }
-
-  logUserAction(username, songName);
+  logAction(`${username} played "${songName}" in room: ${roomName}.`);
 }
 
-function logUserAction(user, songName) {
-  const message = `${user} played "${songName}" in room: ${roomName}. Telegram username: @${userTelegramUsername}`;
-  sendToTelegram(message);
+// Log Action to Telegram
+function logAction(message) {
+  const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+  const payload = {
+    chat_id: CHAT_ID,
+    text: message,
+  };
+
+  fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        console.error("Error sending message to Telegram:", response.statusText);
+      }
+    })
+    .catch((error) => {
+      console.error("Error connecting to Telegram API:", error);
+    });
 }
 
-function sendToTelegram(message) {
-  const token = 'YOUR_BOT_TOKEN'; 
-  const chatId = '-1002148651992'; 
-  fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`)
-    .then(response => response.json())
-    .then(data => console.log('Message sent to Telegram:', data))
-    .catch(error => console.error('Error sending message to Telegram:', error));
-}
+// Start the App
+initializeApp();
