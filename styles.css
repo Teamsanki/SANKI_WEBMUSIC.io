@@ -1,0 +1,52 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  background: #121212;
+  color: #fff;
+}
+
+header {
+  padding: 20px;
+  background: #1db954;
+}
+
+header h1 {
+  margin: 0;
+}
+
+#loginButton {
+  padding: 10px 20px;
+  font-size: 16px;
+  background: #fff;
+  color: #1db954;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+#playlist {
+  list-style: none;
+  padding: 0;
+}
+
+#playlist li {
+  margin: 10px 0;
+  padding: 10px;
+  background: #333;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#playlist li:hover {
+  background: #444;
+}
+
+footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: #000;
+  padding: 10px;
+}
