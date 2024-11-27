@@ -7,37 +7,13 @@ body {
   color: #fff;
 }
 
-.popup {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.8);
-}
-
-#username {
-  padding: 10px;
-  margin-bottom: 20px;
-  font-size: 16px;
-  width: 200px;
-}
-
-#joinRoomBtn {
-  padding: 10px 20px;
-  background: #1db954;
-  color: white;
-  border: none;
-  cursor: pointer;
-  font-size: 18px;
-}
-
-#joinRoomBtn:hover {
-  background: #1ed760;
-}
-
-#roomContainer {
+header {
   padding: 20px;
+  background: #1db954;
+}
+
+header h1 {
+  margin: 0;
 }
 
 #playlist {
@@ -57,22 +33,41 @@ body {
   background: #444;
 }
 
-#toast {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #000;
-  color: #fff;
-  padding: 10px;
-  border-radius: 5px;
-  display: none;
-}
-
 footer {
   position: fixed;
   bottom: 0;
   width: 100%;
   background: #000;
   padding: 10px;
+}
+
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.popup-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+#toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: #fff;
+  padding: 10px;
+  border-radius: 5px;
+  display: none;
 }
