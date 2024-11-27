@@ -16,44 +16,15 @@ header h1 {
   margin: 0;
 }
 
-#logo {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%; /* Circular logo */
-  object-fit: cover;
-}
-
-#user-info, #rejoin-room {
-  margin-top: 20px;
-}
-
-#user-info input, #rejoin-room input {
-  margin: 5px;
-  padding: 10px;
-  background: #333;
-  color: white;
-  border-radius: 5px;
-  border: none;
-}
-
-#user-info button, #rejoin-room button {
-  margin-top: 10px;
-  padding: 10px 20px;
-  background-color: #1db954;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-#user-info button:hover, #rejoin-room button:hover {
-  background-color: #1a9b47;
+#company-logo {
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
 }
 
 #playlist {
   list-style: none;
   padding: 0;
-  margin-top: 20px;
 }
 
 #playlist li {
