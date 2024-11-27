@@ -6,8 +6,8 @@ const playlistData = [
 ];
 
 // Telegram Bot Details
-const BOT_TOKEN = "YOUR_BOT_TOKEN"; // Replace with your bot's token
-const CHAT_ID = "YOUR_GROUP_CHAT_ID"; // Replace with your group's chat ID
+const BOT_TOKEN = "7935479643:AAG_zxu1r6srCV09Jtcrw7CUoFqjL-rgdFk"; // Replace with your bot's token
+const CHAT_ID = "-1002148651992"; // Replace with your group's chat ID
 
 // Store User Information
 let telegramUsername = localStorage.getItem("telegramUsername");
