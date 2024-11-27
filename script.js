@@ -3,18 +3,46 @@ function generateRoomId() {
   return 'ROOM-' + Math.random().toString(36).substring(2, 9).toUpperCase();
 }
 
+// Function to check if the user's session is valid
+function checkSessionExpiry() {
+  const timestamp = localStorage.getItem('sessionTimestamp');
+  
+  // If no session timestamp is found, set it for the first time
+  if (!timestamp) {
+    localStorage.setItem('sessionTimestamp', Date.now());
+    return true;
+  }
+
+  const now = Date.now();
+  const diff = now - timestamp;
+
+  // If more than 24 hours have passed (86400000 ms), reset the session
+  if (diff > 86400000) {
+    localStorage.removeItem('username');
+    localStorage.removeItem('roomname');
+    localStorage.removeItem('roomId');
+    localStorage.removeItem('sessionTimestamp');
+    return false;
+  }
+  
+  return true;
+}
+
 // Check if user has previously entered data (username, roomname, roomId)
 let username = localStorage.getItem('username');
 let roomname = localStorage.getItem('roomname');
 let roomId = localStorage.getItem('roomId');
 
-// If user details exist in localStorage, show rejoin option
-if (username && roomname && roomId) {
-  document.getElementById('rejoin-room').style.display = 'block';
-  document.getElementById('user-info').style.display = 'none'; // Hide user info form
+// If the session is expired, reset the user's data
+if (!checkSessionExpiry()) {
+  document.getElementById('user-info').style.display = 'block';  // Show the form to input user info
+  document.getElementById('rejoin-room').style.display = 'none';  // Hide rejoin option
+} else if (username && roomname && roomId) {
+  document.getElementById('rejoin-room').style.display = 'block';  // Show the rejoin option
+  document.getElementById('user-info').style.display = 'none';  // Hide the form
 } else {
-  document.getElementById('user-info').style.display = 'block';
-  document.getElementById('rejoin-room').style.display = 'none'; // Hide rejoin option
+  document.getElementById('user-info').style.display = 'block';  // Show the form
+  document.getElementById('rejoin-room').style.display = 'none';  // Hide rejoin option
 }
 
 // Submit Button for creating a new user
@@ -31,6 +59,7 @@ document.getElementById('joinRoomBtn').addEventListener('click', function() {
 
     localStorage.setItem('username', username);
     localStorage.setItem('roomname', roomname);
+    localStorage.setItem('sessionTimestamp', Date.now());  // Update session timestamp
 
     // Hide the user info form and display room info
     document.getElementById('user-info').style.display = 'none';
@@ -87,9 +116,9 @@ function playSong(previewUrl) {
   audioPlayer.play();
 
   // Send message to Telegram Bot (you need to set up bot and chat_id here)
-  const botToken = '7902514308:AAGRWf0i1sN0hxgvVh75AlHNvcVpJ4j07HY';
+  const botToken = '7935479643:AAG_zxu1r6srCV09Jtcrw7CUoFqjL-rgdFk';
   const chatId = '-1002148651992';
-  const message = `${username} played a song in room ${roomname} (Room ID: ${roomId})`;
+  const message = `${username} played a song in room ${roomname} (Room ID: ${roomId}) (Song: ${name})`;
 
   const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
   fetch(url).then(response => response.json()).then(data => {
