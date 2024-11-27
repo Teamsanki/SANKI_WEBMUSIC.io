@@ -1,8 +1,8 @@
 // Static Playlist with Spotify Preview URLs
 const playlistData = [
-  { name: "Song 1 - Artist 1", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_1" },
-  { name: "Song 2 - Artist 2", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_2" },
-  { name: "Song 3 - Artist 3", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_3" },
+  { name: "Ihq di Bajiyaan - Diljit Dosanjh", preview_url: "https://open.spotify.com/track/6gHVMInOPMsA4ujf0nWHSt?si=bg0C6-OEQcy0ZWCeLoXvqw&context=spotify%3Asearch%3Aishq" },
+  { name: "Payal - Yo Yo Honey Singh and paradox", preview_url: "https://open.spotify.com/track/76ZWOhRRQzmb4xMoZzTjJ9?si=C4N1mxwaTH6ybnscwLTpxw" },
+  { name: "Zarror - Savi kahlon", preview_url: "https://open.spotify.com/track/5thVzD79BxlDTYy0LfHzvu?si=eMt5BHvDS6SKmuSGfxqWCQ&context=spotify%3Asearch%3Azarror" },
 ];
 
 // Load Playlist
