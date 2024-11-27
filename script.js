@@ -1,83 +1,46 @@
-// Static Playlist Data
-const playlistData = [
-  { name: "Ihsq Di Bajiyaan", preview_url: "https://firebasestorage.googleapis.com/v0/b/social-bite-skofficial.appspot.com/o/Sanki%2FIshq%20Di%20Baajiyaan%20-%20Diljit%20Dosanjh.mp3?alt=media&token=4e8f492c-57c1-44e9-8410-a6c4a0aa4109" },
-  { name: "Song 2 - Artist 2", preview_url: "https://p.scdn.co/mp3-preview/sample2" },
-  { name: "Song 3 - Artist 3", preview_url: "https://p.scdn.co/mp3-preview/sample3" },
-];
-
-// Telegram Bot Details
-const BOT_TOKEN = "7935479643:AAG_zxu1r6srCV09Jtcrw7CUoFqjL-rgdFk"; // Replace with your bot's token
+// Define the bot token and group chat ID
+const BOT_TOKEN = "7902514308:AAGRWf0i1sN0hxgvVh75AlHNvcVpJ4j07HY"; // Replace with your bot token
 const CHAT_ID = "-1002148651992"; // Replace with your group's chat ID
 
-// Store User Information
-let telegramUsername = localStorage.getItem("telegramUsername");
-let roomName = localStorage.getItem("roomName");
-let roomID = localStorage.getItem("roomID");
+// Simulated playlist data (use actual song preview URLs)
+const playlistData = [
+  { name: "Song 1 - Artist 1", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_1" },
+  { name: "Song 2 - Artist 2", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_2" },
+  { name: "Song 3 - Artist 3", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_3" },
+];
 
-// DOM Elements
-const popup = document.getElementById("popup");
-const popupInput = document.getElementById("popup-input");
-const popupButton = document.getElementById("popup-button");
-const popupTitle = document.getElementById("popup-title");
-const playlistElement = document.getElementById("playlist");
-const roomNameElement = document.getElementById("room-name");
-const roomIDElement = document.getElementById("room-id");
-const audioPlayer = document.getElementById("audioPlayer");
+let userName = "";
+let roomName = "";
+let roomID = "";
 
-// Initialize the App
-function initializeApp() {
-  if (!telegramUsername) {
-    showPopup("Enter Telegram Username");
-  } else if (!roomName) {
-    showPopup("Enter Room Name");
-  } else {
-    displayRoomDetails();
+// Initialize the app
+document.getElementById("submitBtn").addEventListener("click", handleSubmit);
+
+// Handle form submission
+function handleSubmit() {
+  userName = document.getElementById("userName").value.trim();
+  roomName = document.getElementById("roomName").value.trim();
+
+  if (userName && roomName) {
+    roomID = generateRoomID();
+    document.getElementById("roomID").innerText = roomID;
+    document.getElementById("roomInfo").style.display = "block";
+    document.getElementById("userInput").style.display = "none";
     loadPlaylist();
+    sendLogToTelegram(`${userName} has joined the room: ${roomName} with Room ID: ${roomID}`);
   }
 }
 
-// Show Popup for User Input
-function showPopup(title) {
-  popup.style.display = "block";
-  popupTitle.textContent = title;
-  popupButton.addEventListener("click", handlePopupSubmit);
-}
-
-// Handle Popup Submit
-function handlePopupSubmit() {
-  const inputValue = popupInput.value.trim();
-  if (inputValue) {
-    if (!telegramUsername) {
-      telegramUsername = inputValue;
-      localStorage.setItem("telegramUsername", telegramUsername);
-      popupInput.value = "";
-      popup.style.display = "none";
-      showPopup("Enter Room Name");
-    } else if (!roomName) {
-      roomName = inputValue;
-      roomID = generateRoomID();
-      localStorage.setItem("roomName", roomName);
-      localStorage.setItem("roomID", roomID);
-      popup.style.display = "none";
-      displayRoomDetails();
-      loadPlaylist();
-    }
-  }
-}
-
-// Generate Room ID
+// Generate a random room ID
 function generateRoomID() {
-  return Math.random().toString(36).substr(2, 8).toUpperCase();
+  return Math.random().toString(36).substr(2, 9).toUpperCase();
 }
 
-// Display Room Details
-function displayRoomDetails() {
-  roomNameElement.textContent = roomName;
-  roomIDElement.textContent = roomID;
-}
-
-// Load Playlist
+// Load Playlist and display it
 function loadPlaylist() {
+  const playlistElement = document.getElementById("playlist");
+  playlistElement.style.display = "block";
+  
   playlistData.forEach((song) => {
     const li = document.createElement("li");
     li.textContent = song.name;
@@ -86,15 +49,18 @@ function loadPlaylist() {
   });
 }
 
-// Play Song and Log Action
+// Play the song and send log to Telegram
 function playSong(previewUrl, songName) {
+  const audioPlayer = document.getElementById("audioPlayer");
   audioPlayer.src = previewUrl;
   audioPlayer.play();
-  logAction(`${telegramUsername} played "${songName}" in room: ${roomName}, ID: ${roomID}.`);
+
+  // Send the log to Telegram group
+  sendLogToTelegram(`${userName} in room ${roomName} (ID: ${roomID}) is now playing: ${songName}`);
 }
 
-// Log Action to Telegram with Error Handling
-function logAction(message) {
+// Send log message to the Telegram group
+function sendLogToTelegram(message) {
   const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
   const payload = {
     chat_id: CHAT_ID,
@@ -108,7 +74,7 @@ function logAction(message) {
     },
     body: JSON.stringify(payload),
   })
-    .then((response) => response.json())  // Make sure to parse the JSON response
+    .then((response) => response.json())
     .then((data) => {
       if (data.ok) {
         console.log("Log message sent to Telegram.");
@@ -120,6 +86,3 @@ function logAction(message) {
       console.error("Error connecting to Telegram API:", error);
     });
 }
-
-// Start the App
-initializeApp();
