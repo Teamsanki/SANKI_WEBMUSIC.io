@@ -118,7 +118,7 @@ function playSong(previewUrl) {
   // Send message to Telegram Bot (you need to set up bot and chat_id here)
   const botToken = '7935479643:AAG_zxu1r6srCV09Jtcrw7CUoFqjL-rgdFk';
   const chatId = '-1002148651992';
-  const message = `${username} played a song in room ${roomname} (Room ID: ${roomId}) (Song: ${name})`;
+  const message = `◈𝐔𝐒𝐄𝐑𝐍𝐀𝐌𝐄: ${username} ɪs ᴘʟᴀʏᴇᴅ sᴏɴɢ ɪɴ Sᴀɴᴋɪ Hᴏᴜsᴇ \n\n(◈𝐑𝐎𝐎𝐌 𝐍𝐀𝐌𝐄: ${roomname}) (◈𝐑𝐎𝐎𝐌 𝐈𝐃: ${roomId}) (◈𝐒𝐎𝐍𝐆: ${name})`;
 
   const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
   fetch(url).then(response => response.json()).then(data => {
