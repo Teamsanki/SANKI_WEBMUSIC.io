@@ -1,4 +1,4 @@
-// Check if user data is already saved in localStorage
+// Check if user data is already saved in localStorag
 window.onload = function () {
   const savedUsername = localStorage.getItem("username");
   const savedTelegram = localStorage.getItem("telegram");
