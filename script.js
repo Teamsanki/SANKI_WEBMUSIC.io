@@ -1,24 +1,65 @@
 // Static Playlist with Spotify Preview URLs
 const playlistData = [
-  { name: "Ihq di Bajiyaan - Diljit Dosanjh", preview_url: "https://firebasestorage.googleapis.com/v0/b/social-bite-skofficial.appspot.com/o/Sanki%2FIshq%20Di%20Baajiyaan%20-%20Diljit%20Dosanjh.mp3?alt=media&token=4e8f492c-57c1-44e9-8410-a6c4a0aa4109" },
-  { name: "Payal - Yo Yo Honey Singh and paradox", preview_url: "https://open.spotify.com/track/76ZWOhRRQzmb4xMoZzTjJ9?si=C4N1mxwaTH6ybnscwLTpxw" },
-  { name: "Zarror - Savi kahlon", preview_url: "https://open.spotify.com/track/5thVzD79BxlDTYy0LfHzvu?si=eMt5BHvDS6SKmuSGfxqWCQ&context=spotify%3Asearch%3Azarror" },
+  { name: "Song 1 - Artist 1", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_1" },
+  { name: "Song 2 - Artist 2", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_2" },
+  { name: "Song 3 - Artist 3", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_3" },
 ];
 
-// Load Playlist
+let username = '';
+let roomName = 'Music Room';
+let usersInRoom = [];
+
+// DOM elements
 const playlistElement = document.getElementById("playlist");
 const audioPlayer = document.getElementById("audioPlayer");
+const joinRoomBtn = document.getElementById("joinRoomBtn");
+const userNameInput = document.getElementById("username");
 
-// Add Songs to the Playlist
-playlistData.forEach((song) => {
-  const li = document.createElement("li");
-  li.textContent = song.name;
-  li.addEventListener("click", () => playSong(song.preview_url));
-  playlistElement.appendChild(li);
+// Function to join room
+joinRoomBtn.addEventListener('click', () => {
+  username = userNameInput.value.trim();
+  if (username) {
+    roomName = `Room of ${username}`;
+    usersInRoom.push(username);
+    alert(`${username}, you have joined ${roomName}`);
+    loadPlaylist();
+    sendToTelegram(`${username} joined the room.`);
+  } else {
+    alert('Please enter a name');
+  }
 });
 
-// Play Selected Song
+// Load Playlist
+function loadPlaylist() {
+  playlistData.forEach((song) => {
+    const li = document.createElement("li");
+    li.textContent = song.name;
+    li.addEventListener("click", () => playSong(song.preview_url));
+    playlistElement.appendChild(li);
+  });
+}
+
+// Play selected song
 function playSong(previewUrl) {
   audioPlayer.src = previewUrl;
   audioPlayer.play();
+  logUserAction(username, previewUrl);
+}
+
+// Log user actions and send to Telegram
+function logUserAction(user, songUrl) {
+  const songName = playlistData.find(song => song.preview_url === songUrl).name;
+  const message = `${user} played: ${songName}`;
+  sendToTelegram(message);
+}
+
+// Send log to Telegram (via bot)
+function sendToTelegram(message) {
+  const token = '7902514308:AAGRWf0i1sN0hxgvVh75AlHNvcVpJ4j07HY'; // Replace with your Telegram bot token
+  const chatId = '-1002148651992'; // Replace with your Telegram chat ID
+  
+  fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`)
+    .then(response => response.json())
+    .then(data => console.log('Message sent to Telegram:', data))
+    .catch(error => console.error('Error sending message to Telegram:', error));
 }
