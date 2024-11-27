@@ -10,10 +10,41 @@ body {
 header {
   padding: 20px;
   background: #1db954;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-header h1 {
+#logo-container {
+  display: flex;
+  align-items: center;
+}
+
+#logo {
+  height: 50px;
+  margin-right: 10px;
+}
+
+h1 {
   margin: 0;
+}
+
+#user-name-container {
+  margin-top: 30px;
+}
+
+#username {
+  padding: 10px;
+  margin-right: 10px;
+}
+
+#joinRoomBtn {
+  padding: 10px 20px;
+  background: #fff;
+  color: #1db954;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
 }
 
 #playlist {
