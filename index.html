@@ -3,33 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Spotify Music Player</title>
+  <title>Spotify Music Player - Room</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header>
-    <div id="logo-container">
-      <img src="company-logo.png" alt="Company Logo" id="logo">
-      <h1>Online Music Player</h1>
-    </div>
-  </header>
-  <main>
-    <!-- Popup for User Name -->
-    <div id="popup" class="popup">
-      <label for="username">Enter your name to join the room:</label>
-      <input type="text" id="username" placeholder="Enter your name">
-      <button id="joinRoomBtn">Join Room</button>
-    </div>
+  <!-- Popup for username -->
+  <div id="popup" class="popup">
+    <h2>Enter Your Name</h2>
+    <input type="text" id="username" placeholder="Enter your name" />
+    <button id="joinRoomBtn">Join Room</button>
+  </div>
 
-    <!-- Room Name and Playlist -->
-    <div id="roomContainer" style="display: none;">
-      <h2 id="roomName">SANKI HOUSE</h2>
-      <ul id="playlist"></ul>
-    </div>
-  </main>
-  <footer>
-    <audio id="audioPlayer" controls></audio>
-  </footer>
+  <!-- Room Display -->
+  <div id="roomContainer" style="display: none;">
+    <h1 id="roomName">SANKI HOUSE</h1>
+    <div id="playlist"></div>
+    <footer>
+      <audio id="audioPlayer" controls></audio>
+    </footer>
+  </div>
+
+  <!-- Toast message -->
+  <div id="toast" class="toast"></div>
+
   <script src="script.js"></script>
 </body>
 </html>
