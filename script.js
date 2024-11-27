@@ -93,7 +93,7 @@ function playSong(previewUrl, songName) {
   logAction(`${telegramUsername} played "${songName}" in room: ${roomName}, ID: ${roomID}.`);
 }
 
-// Log Action to Telegram
+// Log Action to Telegram with Error Handling
 function logAction(message) {
   const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
   const payload = {
@@ -108,11 +108,12 @@ function logAction(message) {
     },
     body: JSON.stringify(payload),
   })
-    .then((response) => {
-      if (!response.ok) {
-        console.error("Error sending message to Telegram:", response.statusText);
-      } else {
+    .then((response) => response.json())  // Make sure to parse the JSON response
+    .then((data) => {
+      if (data.ok) {
         console.log("Log message sent to Telegram.");
+      } else {
+        console.error("Error sending message to Telegram:", data.description);
       }
     })
     .catch((error) => {
