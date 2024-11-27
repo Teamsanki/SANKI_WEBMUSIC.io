@@ -85,8 +85,8 @@ function playSong(previewUrl) {
   audioPlayer.play();
 
   // Send message to Telegram Bot (you need to set up bot and chat_id here)
-  const botToken = 'YOUR_BOT_TOKEN';
-  const chatId = 'YOUR_CHAT_ID';
+  const botToken = '7902514308:AAGRWf0i1sN0hxgvVh75AlHNvcVpJ4j07HY';
+  const chatId = '-1002148651992';
   const message = `${username} played a song in room ${roomname} (Room ID: ${roomId})`;
 
   const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
