@@ -6,8 +6,8 @@ const playlistData = [
 ];
 
 // Telegram Bot Details
-const BOT_TOKEN = "7935479643:AAG_zxu1r6srCV09Jtcrw7CUoFqjL-rgdFk"; // Replace with your bot's token
-const CHAT_ID = "-1002148651992"; // Replace with your group's chat ID
+const BOT_TOKEN = "YOUR_BOT_TOKEN"; // Replace with your bot's token
+const CHAT_ID = "YOUR_GROUP_CHAT_ID"; // Replace with your group's chat ID
 
 // Store User Information
 let telegramUsername = localStorage.getItem("telegramUsername");
@@ -90,7 +90,7 @@ function loadPlaylist() {
 function playSong(previewUrl, songName) {
   audioPlayer.src = previewUrl;
   audioPlayer.play();
-  logAction(`${telegramUsername} played "${songName}" in room: ${roomName}.`);
+  logAction(`${telegramUsername} played "${songName}" in room: ${roomName}, ID: ${roomID}.`);
 }
 
 // Log Action to Telegram
@@ -111,6 +111,8 @@ function logAction(message) {
     .then((response) => {
       if (!response.ok) {
         console.error("Error sending message to Telegram:", response.statusText);
+      } else {
+        console.log("Log message sent to Telegram.");
       }
     })
     .catch((error) => {
