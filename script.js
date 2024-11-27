@@ -1,8 +1,8 @@
 // Static Playlist with Spotify Preview URLs
 const playlistData = [
-  { name: "Ishq Di Bajiyaan", preview_url: "https://firebasestorage.googleapis.com/v0/b/social-bite-skofficial.appspot.com/o/Sanki%2FIshq%20Di%20Baajiyaan%20-%20Diljit%20Dosanjh.mp3?alt=media&token=4e8f492c-57c1-44e9-8410-a6c4a0aa4109" },
-  { name: "Payal Yo Yo honey singh", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_2" },
-  { name: "Zarror New punjabi song", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_3" },
+  { name: "Song 1 - Artist 1", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_1" },
+  { name: "Song 2 - Artist 2", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_2" },
+  { name: "Song 3 - Artist 3", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_3" },
 ];
 
 let username = '';
@@ -63,12 +63,15 @@ joinRoomBtn.addEventListener('click', () => {
 
 // Load Playlist
 function loadPlaylist() {
-  playlistData.forEach((song) => {
-    const li = document.createElement("li");
-    li.textContent = song.name;
-    li.addEventListener("click", () => playSong(song.preview_url, song.name));
-    playlistElement.appendChild(li);
-  });
+  // Prevent loading the playlist multiple times
+  if (playlistElement.children.length === 0) {
+    playlistData.forEach((song) => {
+      const li = document.createElement("li");
+      li.textContent = song.name;
+      li.addEventListener("click", () => playSong(song.preview_url, song.name));
+      playlistElement.appendChild(li);
+    });
+  }
 }
 
 // Play selected song
