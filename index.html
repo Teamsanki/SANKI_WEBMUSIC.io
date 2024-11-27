@@ -3,30 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Music Room</title>
+  <title>Spotify Music Player</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-  <div id="userForm">
-    <h2>Enter Your Details</h2>
-    <input type="text" id="username" placeholder="Enter your username" />
-    <input type="text" id="telegram" placeholder="Enter your Telegram username" />
-    <input type="text" id="roomName" placeholder="Enter your room name" />
-    <button id="submitBtn">Submit</button>
-  </div>
-
-  <div id="roomDetails">
-    <h2>Room Details</h2>
-    <p id="welcomeMessage"></p>
-    <p>Room: <span id="roomDisplay"></span></p>
-    <p>Room ID: <span id="roomIdDisplay"></span></p>
-    <h3>Playlist</h3>
-    <ul id="playlist"></ul>
+  <header>
+    <img id="logo" src="company_logo.png" alt="Company Logo">
+    <h1>Spotify Music Player</h1>
+  </header>
+  <main>
+    <div id="user-info">
+      <label for="username">Enter Telegram Username:</label>
+      <input type="text" id="username" placeholder="Enter your Telegram Username">
+      <label for="roomname">Enter Room Name:</label>
+      <input type="text" id="roomname" placeholder="Enter Room Name">
+      <button id="joinRoomBtn">Submit</button>
+    </div>
+    <div id="room-info" style="display: none;">
+      <h2>Room: <span id="roomNameDisplay"></span></h2>
+      <p>Room ID: <span id="roomIdDisplay"></span></p>
+      <ul id="playlist"></ul>
+    </div>
+  </main>
+  <footer>
     <audio id="audioPlayer" controls></audio>
-  </div>
-
+  </footer>
   <script src="script.js"></script>
-
 </body>
 </html>
