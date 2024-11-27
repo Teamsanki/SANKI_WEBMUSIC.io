@@ -5,7 +5,7 @@ let roomId = localStorage.getItem('roomId');
 
 // Static Playlist with Spotify Preview URLs
 const playlistData = [
-  { name: "Ishq di Bajiyaan", preview_url: "https://firebasestorage.googleapis.com/v0/b/social-bite-skofficial.appspot.com/o/Sanki%2FIshq%20Di%20Baajiyaan%20-%20Diljit%20Dosanjh.mp3?alt=media&token=4e8f492c-57c1-44e9-8410-a6c4a0aa4109" },
+  { name: "Song 1 - Artist 1", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_1" },
   { name: "Song 2 - Artist 2", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_2" },
   { name: "Song 3 - Artist 3", preview_url: "https://p.scdn.co/mp3-preview/your_preview_url_3" },
 ];
@@ -15,7 +15,7 @@ function generateRoomId() {
   return 'ROOM-' + Math.random().toString(36).substring(2, 9).toUpperCase();
 }
 
-// Show join room inputs if username and roomname are not stored
+// Check if data exists in localStorage to decide the flow
 if (!username || !roomname || !roomId) {
   document.getElementById('user-info').style.display = 'block';
   document.getElementById('joinRoomBtn').addEventListener('click', function() {
@@ -43,11 +43,21 @@ if (!username || !roomname || !roomId) {
     }
   });
 } else {
-  // Show the room info if already stored
-  document.getElementById('room-info').style.display = 'block';
-  document.getElementById('roomNameDisplay').textContent = roomname;
-  document.getElementById('roomIdDisplay').textContent = roomId;
-  loadPlaylist();
+  // User has previously saved room, ask for room ID to rejoin
+  document.getElementById('rejoin-room').style.display = 'block';
+  document.getElementById('rejoinBtn').addEventListener('click', function() {
+    const enteredRoomId = document.getElementById('roomIdInput').value;
+
+    if (enteredRoomId === roomId) {
+      document.getElementById('room-info').style.display = 'block';
+      document.getElementById('roomNameDisplay').textContent = roomname;
+      document.getElementById('roomIdDisplay').textContent = roomId;
+      document.getElementById('rejoin-room').style.display = 'none';
+      loadPlaylist();
+    } else {
+      alert('Invalid Room ID. Please enter a valid room ID.');
+    }
+  });
 }
 
 // Load Playlist
