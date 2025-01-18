@@ -5,58 +5,56 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Music App</title>
   <style>
-    /* Basic CSS for styling */
+    /* Global Styles */
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Arial', sans-serif;
       margin: 0;
       padding: 0;
-      background-color: #f5f5f5;
+      background-color: #f4f4f4;
     }
     header {
-      background-color: #6200ea;
+      background-color: #4CAF50;
       color: white;
-      padding: 15px;
+      padding: 10px 20px;
       text-align: center;
     }
     .container {
-      padding: 20px;
+      margin: 20px auto;
+      max-width: 800px;
     }
     .card {
       background: white;
-      margin: 10px;
-      padding: 15px;
-      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
       border-radius: 8px;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
     }
-    .form-group {
-      margin: 10px 0;
-    }
-    label {
+    input, button {
       display: block;
-      margin-bottom: 5px;
-    }
-    input, button, select, textarea {
       width: 100%;
       padding: 10px;
-      margin: 5px 0;
+      margin: 10px 0;
       border: 1px solid #ccc;
-      border-radius: 5px;
+      border-radius: 4px;
     }
     button {
-      background-color: #6200ea;
+      background-color: #4CAF50;
       color: white;
       border: none;
       cursor: pointer;
     }
     button:hover {
-      background-color: #3700b3;
+      background-color: #45a049;
     }
     .top-bar {
       display: flex;
       justify-content: space-between;
-      background-color: #6200ea;
-      color: white;
       padding: 10px;
+      background-color: #4CAF50;
+      color: white;
+    }
+    .hidden {
+      display: none;
     }
     .song-list {
       display: flex;
@@ -65,17 +63,14 @@
     }
     .song-card {
       background: white;
+      padding: 15px;
       border-radius: 8px;
       box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-      padding: 15px;
-      width: 200px;
+      width: calc(33% - 10px);
     }
     .song-card img {
       max-width: 100%;
       border-radius: 8px;
-    }
-    .hidden {
-      display: none;
     }
   </style>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
@@ -86,41 +81,56 @@
   <header>
     <h1>Music App</h1>
   </header>
-  <div class="container">
-    <!-- Admin Panel -->
-    <div id="admin-panel" class="hidden">
+
+  <!-- Login Page -->
+  <div id="login-page" class="container card">
+    <h2>Login</h2>
+    <input type="email" id="login-email" placeholder="Enter your email">
+    <input type="password" id="login-password" placeholder="Enter your password">
+    <button onclick="login()">Login</button>
+    <p>Don't have an account? <a href="#" onclick="showSignup()">Sign Up</a></p>
+  </div>
+
+  <!-- Signup Page -->
+  <div id="signup-page" class="container card hidden">
+    <h2>Sign Up</h2>
+    <input type="text" id="signup-name" placeholder="Enter your name">
+    <input type="email" id="signup-email" placeholder="Enter your email">
+    <input type="password" id="signup-password" placeholder="Enter your password">
+    <button onclick="signup()">Sign Up</button>
+    <p>Already have an account? <a href="#" onclick="showLogin()">Login</a></p>
+  </div>
+
+  <!-- Admin Panel -->
+  <div id="admin-panel" class="hidden">
+    <div class="top-bar">
       <h2>Admin Panel</h2>
+      <button onclick="logout()">Logout</button>
+    </div>
+    <div class="container">
       <div class="card">
         <h3>Add Song</h3>
-        <div class="form-group">
-          <label for="song-title">Song Title</label>
-          <input type="text" id="song-title" placeholder="Enter song title">
-        </div>
-        <div class="form-group">
-          <label for="song-singer">Singer Name</label>
-          <input type="text" id="song-singer" placeholder="Enter singer name">
-        </div>
-        <div class="form-group">
-          <label for="song-photo">Song Photo URL</label>
-          <input type="text" id="song-photo" placeholder="Enter song photo URL">
-        </div>
-        <div class="form-group">
-          <label for="song-link">Song Link/File</label>
-          <input type="text" id="song-link" placeholder="Enter song link or file URL">
-        </div>
+        <input type="text" id="song-title" placeholder="Song Title">
+        <input type="text" id="song-singer" placeholder="Singer Name">
+        <input type="text" id="song-photo" placeholder="Song Photo URL">
+        <input type="text" id="song-link" placeholder="Song Link/File">
         <button onclick="addSong()">Add Song</button>
       </div>
+      <div class="card">
+        <h3>Requests</h3>
+        <ul id="request-list"></ul>
+      </div>
     </div>
+  </div>
 
-    <!-- User Panel -->
-    <div id="user-panel">
-      <div class="top-bar">
-        <h2>User Panel</h2>
-        <button onclick="showPlaylist()">My Playlist</button>
-      </div>
-      <div id="song-list" class="song-list">
-        <!-- Songs will be displayed here -->
-      </div>
+  <!-- User Panel -->
+  <div id="user-panel" class="hidden">
+    <div class="top-bar">
+      <h2>User Panel</h2>
+      <button onclick="logout()">Logout</button>
+    </div>
+    <div class="container">
+      <div class="song-list" id="song-list"></div>
     </div>
   </div>
 
@@ -140,7 +150,54 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-    // Add Song Function (Admin Panel)
+    // Toggle visibility
+    function showLogin() {
+      document.getElementById("login-page").classList.remove("hidden");
+      document.getElementById("signup-page").classList.add("hidden");
+    }
+
+    function showSignup() {
+      document.getElementById("login-page").classList.add("hidden");
+      document.getElementById("signup-page").classList.remove("hidden");
+    }
+
+    function login() {
+      const email = document.getElementById("login-email").value;
+      const password = document.getElementById("login-password").value;
+
+      if (email === "schoudhary11256@gmail.com" && password === "TS112566") {
+        document.getElementById("admin-panel").classList.remove("hidden");
+        document.getElementById("login-page").classList.add("hidden");
+      } else {
+        auth.signInWithEmailAndPassword(email, password)
+          .then(() => {
+            document.getElementById("user-panel").classList.remove("hidden");
+            document.getElementById("login-page").classList.add("hidden");
+          })
+          .catch(err => alert(err.message));
+      }
+    }
+
+    function signup() {
+      const email = document.getElementById("signup-email").value;
+      const password = document.getElementById("signup-password").value;
+
+      auth.createUserWithEmailAndPassword(email, password)
+        .then(() => {
+          alert("Account created successfully!");
+          showLogin();
+        })
+        .catch(err => alert(err.message));
+    }
+
+    function logout() {
+      auth.signOut().then(() => {
+        document.getElementById("admin-panel").classList.add("hidden");
+        document.getElementById("user-panel").classList.add("hidden");
+        showLogin();
+      });
+    }
+
     async function addSong() {
       const title = document.getElementById("song-title").value;
       const singer = document.getElementById("song-singer").value;
@@ -148,27 +205,21 @@
       const link = document.getElementById("song-link").value;
 
       if (title && singer && photo && link) {
-        await db.collection("songs").add({
-          title,
-          singer,
-          photo,
-          link
-        });
+        await db.collection("songs").add({ title, singer, photo, link });
         alert("Song added successfully!");
       } else {
         alert("Please fill out all fields.");
       }
     }
 
-    // Fetch Songs (User Panel)
     async function fetchSongs() {
       const songList = document.getElementById("song-list");
-      songList.innerHTML = ""; // Clear the list
+      songList.innerHTML = "";
       const snapshot = await db.collection("songs").get();
       snapshot.forEach(doc => {
         const song = doc.data();
         const card = document.createElement("div");
-        card.classList.add("song-card");
+        card.className = "song-card";
         card.innerHTML = `
           <img src="${song.photo}" alt="${song.title}">
           <h3>${song.title}</h3>
@@ -179,7 +230,6 @@
       });
     }
 
-    // Fetch songs on load
     fetchSongs();
   </script>
 </body>
