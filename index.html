@@ -3,39 +3,184 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Spotify Music Player</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>Music App</title>
+  <style>
+    /* Basic CSS for styling */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+    }
+    header {
+      background-color: #6200ea;
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+    .container {
+      padding: 20px;
+    }
+    .card {
+      background: white;
+      margin: 10px;
+      padding: 15px;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+    }
+    .form-group {
+      margin: 10px 0;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    input, button, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 5px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      background-color: #6200ea;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #3700b3;
+    }
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      background-color: #6200ea;
+      color: white;
+      padding: 10px;
+    }
+    .song-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .song-card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 15px;
+      width: 200px;
+    }
+    .song-card img {
+      max-width: 100%;
+      border-radius: 8px;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
 </head>
 <body>
   <header>
-    <img src="https://firebasestorage.googleapis.com/v0/b/social-bite-skofficial.appspot.com/o/Sanki%2FIMG_6861.jpeg?alt=media&token=7f50a8e1-5ae0-40b1-a951-64c5d96fc2b3" alt="Company Logo" id="company-logo">
-    <h1>𝐓𝐒-𝐎𝐍𝐋𝐈𝐍𝐄 𝐌𝐔𝐒𝐈𝐂</h1>
+    <h1>Music App</h1>
   </header>
+  <div class="container">
+    <!-- Admin Panel -->
+    <div id="admin-panel" class="hidden">
+      <h2>Admin Panel</h2>
+      <div class="card">
+        <h3>Add Song</h3>
+        <div class="form-group">
+          <label for="song-title">Song Title</label>
+          <input type="text" id="song-title" placeholder="Enter song title">
+        </div>
+        <div class="form-group">
+          <label for="song-singer">Singer Name</label>
+          <input type="text" id="song-singer" placeholder="Enter singer name">
+        </div>
+        <div class="form-group">
+          <label for="song-photo">Song Photo URL</label>
+          <input type="text" id="song-photo" placeholder="Enter song photo URL">
+        </div>
+        <div class="form-group">
+          <label for="song-link">Song Link/File</label>
+          <input type="text" id="song-link" placeholder="Enter song link or file URL">
+        </div>
+        <button onclick="addSong()">Add Song</button>
+      </div>
+    </div>
 
-  <!-- Initial Form to get user details -->
-  <div id="user-info" style="display: none;">
-    <h3>Enter your details</h3>
-    <input type="text" id="username" placeholder="Enter your username">
-    <input type="text" id="roomname" placeholder="Enter your room name">
-    <button id="joinRoomBtn">Submit</button>
+    <!-- User Panel -->
+    <div id="user-panel">
+      <div class="top-bar">
+        <h2>User Panel</h2>
+        <button onclick="showPlaylist()">My Playlist</button>
+      </div>
+      <div id="song-list" class="song-list">
+        <!-- Songs will be displayed here -->
+      </div>
+    </div>
   </div>
 
-  <!-- Rejoin Room Section -->
-  <div id="rejoin-room" style="display: none;">
-    <h3>Enter Room ID to Rejoin</h3>
-    <input type="text" id="roomIdInput" placeholder="Enter Room ID">
-    <button id="rejoinBtn">Rejoin</button>
-  </div>
+  <script>
+    // Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
 
-  <!-- Room Info Section (after user joins or rejoin) -->
-  <div id="room-info" style="display: none;">
-    <h3>Welcome to your Room</h3>
-    <p>Room Name: <span id="roomNameDisplay"></span></p>
-    <p>Room ID: <span id="roomIdDisplay"></span></p>
-    <ul id="playlist"></ul>
-    <audio id="audioPlayer" controls></audio>
-  </div>
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
-  <script src="script.js"></script>
+    // Add Song Function (Admin Panel)
+    async function addSong() {
+      const title = document.getElementById("song-title").value;
+      const singer = document.getElementById("song-singer").value;
+      const photo = document.getElementById("song-photo").value;
+      const link = document.getElementById("song-link").value;
+
+      if (title && singer && photo && link) {
+        await db.collection("songs").add({
+          title,
+          singer,
+          photo,
+          link
+        });
+        alert("Song added successfully!");
+      } else {
+        alert("Please fill out all fields.");
+      }
+    }
+
+    // Fetch Songs (User Panel)
+    async function fetchSongs() {
+      const songList = document.getElementById("song-list");
+      songList.innerHTML = ""; // Clear the list
+      const snapshot = await db.collection("songs").get();
+      snapshot.forEach(doc => {
+        const song = doc.data();
+        const card = document.createElement("div");
+        card.classList.add("song-card");
+        card.innerHTML = `
+          <img src="${song.photo}" alt="${song.title}">
+          <h3>${song.title}</h3>
+          <p>Singer: ${song.singer}</p>
+          <a href="${song.link}" target="_blank">Listen</a>
+        `;
+        songList.appendChild(card);
+      });
+    }
+
+    // Fetch songs on load
+    fetchSongs();
+  </script>
 </body>
 </html>
